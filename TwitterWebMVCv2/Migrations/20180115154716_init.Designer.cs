@@ -11,7 +11,7 @@ using TwitterWebMVCv2.Data;
 namespace TwitterWebMVCv2.Migrations
 {
     [DbContext(typeof(TweetDbContext))]
-    [Migration("20180113211826_init")]
+    [Migration("20180115154716_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -71,9 +71,12 @@ namespace TwitterWebMVCv2
 
                     foreach (var hashtag in recievedTweet.Tweet.Hashtags)
                     {
-                        if (GetHashtag(hashtag.ToString()) != null)
+                        // Convert hashtag to uppercase string
+                        var upperHashtag = hashtag.ToString().ToUpper();
+
+                        if (GetHashtag(upperHashtag) != null)
                         {
-                            Hashtag tweetHashtag = GetHashtag(hashtag.ToString());
+                            Hashtag tweetHashtag = GetHashtag(upperHashtag);
 
                             if (!hashtagList.Contains(tweetHashtag))
                             {

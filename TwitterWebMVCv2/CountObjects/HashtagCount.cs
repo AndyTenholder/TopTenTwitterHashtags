@@ -10,5 +10,7 @@ namespace TwitterWebMVCv2.CountObjects
     {
         public Hashtag Hashtag { get; set; }
         public int TimesUsed { get; set; }
+        public int[] TweetsPerMinute { get; set; }
+
     }
 }

@@ -6,6 +6,7 @@ using Tweetinvi;
 using Microsoft.Extensions.DependencyInjection;
 using TwitterWebMVCv2.Data;
 using TwitterWebMVCv2.Models;
+using System;
 
 namespace TwitterWebMVCv2
 {
@@ -113,6 +114,11 @@ namespace TwitterWebMVCv2
                         context.SaveChanges();
                     }
                 };
+            };
+
+            stream.StreamStopped += (sender, argus) =>
+            {
+                stream.ResumeStream();
             };
 
             /* Using Async version of StartStreamMatchingAnyCondition method

@@ -20,13 +20,13 @@
 <button id="getDayData">Day</button>
 <button id="getWeekData">Week</button>
 
-<table border=0 class="underlined">
+<table>
     <tr>
         <td>
-            <ol id="example1">
-                @for (int i = 1; i < 11; i++)
+            <ol>
+                @for (int i = 0; i < 10; i++)
                 {
-                    <li><p>@Model.HourHashtagCounts[i].Hashtag.Name</p></li>
+                    <li><p>@Model.HourHashtagCounts[i].Hashtag.Name - @Model.HourHashtagCounts[i].TimesUsed</p></li>
                 }
             </ol>
         </td>
@@ -36,13 +36,13 @@
 @*Tweets Each Hour Line Graph Logic*@
 @{
     @*Random object used to create random colors*@
-    Random rnd = new Random();
-    List<int> tweetDataList = new List<int>();
+Random rnd = new Random();
+List<int> tweetDataList = new List<int>();
     @*Chose to have random color for line graph becuase pie chart colors are random*@
 string TweetColor = String.Format("rgba({0},{1},{2},0.6)", rnd.Next(256), rnd.Next(256), rnd.Next(256));
-for (int i = 0; i < Model.TweetsPerHour.Count(); i++)
+for (int i = 0; i < Model.HourHashtagCounts.Count(); i++)
 {
-    tweetDataList.Add(Model.TweetsPerHour[i]);
+    tweetDataList.Add(Model.HourHashtagCounts[i].TimesUsed);
 }
 }
 @*graphs made using the Charts.js Lib http://www.chartjs.org/*@
@@ -88,61 +88,4 @@ for (int i = 0; i < Model.TweetsPerHour.Count(); i++)
         }
     });
 </script>
-<br />
-<h1>in <strong>@Model.TotalLanguages</strong> different languages</h1>
-
-@*Languages Pie Chart Logic*@
-@{
-    List<string> languageNameList = new List<string>();
-    List<int> timesUsedList = new List<int>();
-    List<string> colorList = new List<string>();
-    List<int> borderList = new List<int>();
-
-    @*List of languages was sorted from greatest to least in the TBTController using language comparer*@
-foreach (var langauge in Model.Languages)
-{
-    if (langauge.Name == "UN_NotReferenced")
-    {
-        languageNameList.Add("Unidentified");
-    }
-    else
-    {
-        languageNameList.Add(langauge.Name);
-    }
-    timesUsedList.Add(langauge.TimesUsed);
-    @*Created randomized color so that each item on the pie chart would have it's own color*@
-    @*TODO- Create/find a list of colors 30+. The randomized colors are often to similar or unattractive*@
-    colorList.Add(String.Format("rgba({0},{1},{2},0.6)", rnd.Next(256), rnd.Next(256), rnd.Next(256)));
-    borderList.Add(0);
-}
-}
-@*graphs made using the Charts.js Lib http://www.chartjs.org/*@
-<canvas id="LanguagePieChart"></canvas>
-<script>
-    var ctx = document.getElementById("LanguagePieChart");
-    var LanguagePieChart = new Chart(ctx, {
-        @*type can be either "doughnut" or "pie"*@
-        type: 'doughnut',
-        data: {
-            @*C# list must be converted to JSON object to be used by Chart.js lib*@
-            labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(languageNameList)),
-            datasets: [{
-                backgroundColor: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(colorList)),
-                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(timesUsedList)),
-                borderWidth: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(borderList)),
-            }]
-        },
-        options:
-        {
-            title:
-            {
-                display: true,
-                text: 'In Order by Occurence'
-            },
-            segmentShowStroke: false,
-            responsive: true,
-            maintainAspectRatio: true
-        }
-    });
-</script>
-
+<br/> 

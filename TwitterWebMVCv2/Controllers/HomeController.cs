@@ -73,30 +73,37 @@ namespace TwitterWebMVCv2.Controllers
                     hashtagCount.TimesUsed += 100;
                     if (interval == "hour")
                     {
+                        // adds 100 to the correct 5 minute interval 0-11
                         AddTweetPerMinute(tweetHashtag, hashtagCount);
                     }
                     if (interval == "day")
                     {
+                        // adds 100 to the correct hour interval 0-23
                         AddTweetPerHour(tweetHashtag, hashtagCount);
                     }
                     if (interval == "week")
                     {
+                        // adds 100 to the correct day interval 0-6
                         AddTweetPerDay(tweetHashtag, hashtagCount);
                     }
                 }
                 else
                 {
+                    // period be the interval on the x-axis of the line graph
                     int period = 0;
                     if (interval == "hour")
                     {
+                        // Each hour will be divided into 5 minute intervals
                         period = 12;
                     }
                     if (interval == "day")
                     {
+                        // Each day will be divided into 1 hour intervals
                         period = 24;
                     }
                     if (interval == "week")
                     {
+                        // Each week will be divided into 1 day intervals
                         period = 7;
                     }
                     HashtagCount newHashtagCount = new HashtagCount
@@ -106,18 +113,23 @@ namespace TwitterWebMVCv2.Controllers
                         // So each hashtag collected will be counted 100 times
                         TimesUsed = 100,
 
+                        // int[] that stores data to be used in line graph
+                        // period is intervals for the X axis
                         TweetsPer = new int[period]
                     };
                     if (interval == "hour")
                     {
+                        // adds 100 to the correct 5 minute interval 0-11
                         AddTweetPerMinute(tweetHashtag, newHashtagCount);
                     }
                     if (interval == "day")
                     {
+                        // adds 100 to the correct hour interval 0-23
                         AddTweetPerHour(tweetHashtag, newHashtagCount);
                     }
                     if (interval == "week")
                     {
+                        // adds 100 to the correct day interval 0-6
                         AddTweetPerDay(tweetHashtag, newHashtagCount);
                     }
 
@@ -128,11 +140,13 @@ namespace TwitterWebMVCv2.Controllers
 
             // Sort HashtagCounts by TimesUsed
             hashtagCounts.Sort(new HashtagCountComparer());
+            // Drop all but Top 10 Hashtags
             hashtagCounts.RemoveRange(10, hashtagCounts.Count - 10);
 
             return hashtagCounts;
         }
 
+        // Determine which day the tweet occured on and add 100 to the index of the day
         private void AddTweetPerDay(TweetHashtag tweetHashtag, HashtagCount hashtagCount)
         {
             if (DateTime.Now - tweetHashtag.Tweet.DateTime < DateTime.Now - DateTime.Now.AddDays(-1))
@@ -165,6 +179,7 @@ namespace TwitterWebMVCv2.Controllers
             }
         }
 
+        // Determine which hour the tweet occured on and add 100 to the index of the hour
         private void AddTweetPerHour(TweetHashtag tweetHashtag, HashtagCount hashtagCount)
         {
             if (tweetHashtag.Tweet.DateTime.Hour == 0)
@@ -264,7 +279,8 @@ namespace TwitterWebMVCv2.Controllers
                 hashtagCount.TweetsPer[23] += 100;
             }
         }
-        
+
+        // Determine which minute range the tweet occured on and add 100 to the index of the minute range
         private void AddTweetPerMinute(TweetHashtag tweetHashtag, HashtagCount hashtagCount)
         {
             if (tweetHashtag.Tweet.DateTime.Minute < 6)

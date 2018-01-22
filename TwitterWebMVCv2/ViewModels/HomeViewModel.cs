@@ -9,10 +9,14 @@ namespace TwitterWebMVCv2.ViewModels
     public class HomeViewModel
     {
         public List<HashtagCount> HourHashtagCounts { get; set; }
+        public List<HashtagCount> DayHashtagCounts { get; set; }
+        public List<HashtagCount> WeekHashtagCounts { get; set; }
 
-        public HomeViewModel(List<HashtagCount> hourHashtagCounts)
+        public HomeViewModel(List<HashtagCount> hourHashtagCounts, List<HashtagCount> dayHashtagCounts, List<HashtagCount> weekHashtagCounts)
         {
             HourHashtagCounts = hourHashtagCounts;
+            DayHashtagCounts = dayHashtagCounts;
+            WeekHashtagCounts = weekHashtagCounts;
         }
     }
 }

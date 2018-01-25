@@ -10,7 +10,7 @@ namespace TwitterWebMVCv2.CountObjects
     {
         public Hashtag Hashtag { get; set; }
         public int TimesUsed { get; set; }
-        public int[] TweetsPer { get; set; }
+        public Dictionary<string, int> TweetsPer { get; set; }
 
     }
 }

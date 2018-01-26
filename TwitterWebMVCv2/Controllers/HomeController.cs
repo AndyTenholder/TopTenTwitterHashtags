@@ -25,10 +25,10 @@ namespace TwitterWebMVCv2.Controllers
         {
 
             List<HashtagCount> hourTopTen = GetTopTen("hour");
-            List<HashtagCount> dayTopTen = GetTopTen("day");
-            List<HashtagCount> weekTopTen = GetTopTen("week");
+            //List<HashtagCount> dayTopTen = GetTopTen("day");
+            //List<HashtagCount> weekTopTen = GetTopTen("week");
 
-            HomeViewModel homeViewModel = new HomeViewModel(hourTopTen, dayTopTen, weekTopTen);
+            HomeViewModel homeViewModel = new HomeViewModel(hourTopTen);
 
             return View(homeViewModel);
         }
@@ -150,187 +150,179 @@ namespace TwitterWebMVCv2.Controllers
         // Determine which day the tweet occured on and add 100 to the index of the day
         private void AddTweetPerDay(TweetHashtag tweetHashtag, HashtagCount hashtagCount)
         {
-            if (DateTime.Now - tweetHashtag.Tweet.DateTime < DateTime.Now - DateTime.Now.AddDays(-1))
+            Tweet tweet = context.Tweets.First(t => t.ID == tweetHashtag.TweetID);
+            var tweetDateTime = tweet.DateTime;
+            var nowDateTime = DateTime.Now;
+            var tweetsPer = hashtagCount.TweetsPer;
+
+            if (nowDateTime - tweetDateTime < nowDateTime - nowDateTime.AddDays(-1))
             {
-                hashtagCount.TweetsPer[6] += 100;
+                tweetsPer[6] += 100;
             }
-            else if (DateTime.Now - tweetHashtag.Tweet.DateTime < DateTime.Now - DateTime.Now.AddDays(-2))
+            else if (nowDateTime - tweetDateTime < nowDateTime - nowDateTime.AddDays(-2))
             {
-                hashtagCount.TweetsPer[5] += 100;
+                tweetsPer[5] += 100;
             }
-            else if (DateTime.Now - tweetHashtag.Tweet.DateTime < DateTime.Now - DateTime.Now.AddDays(-3))
+            else if (nowDateTime - tweetDateTime < nowDateTime - nowDateTime.AddDays(-3))
             {
-                hashtagCount.TweetsPer[4] += 100;
+                tweetsPer[4] += 100;
             }
-            else if (DateTime.Now - tweetHashtag.Tweet.DateTime < DateTime.Now - DateTime.Now.AddDays(-4))
+            else if (nowDateTime - tweetDateTime < nowDateTime - nowDateTime.AddDays(-4))
             {
-                hashtagCount.TweetsPer[3] += 100;
+                tweetsPer[3] += 100;
             }
-            else if (DateTime.Now - tweetHashtag.Tweet.DateTime < DateTime.Now - DateTime.Now.AddDays(-5))
+            else if (nowDateTime - tweetDateTime < nowDateTime - nowDateTime.AddDays(-5))
             {
-                hashtagCount.TweetsPer[2] += 100;
+                tweetsPer[2] += 100;
             }
-            else if (DateTime.Now - tweetHashtag.Tweet.DateTime < DateTime.Now - DateTime.Now.AddDays(-6))
+            else if (nowDateTime - tweetDateTime < nowDateTime - nowDateTime.AddDays(-6))
             {
-                hashtagCount.TweetsPer[1] += 100;
+                tweetsPer[1] += 100;
             }
-            else if (DateTime.Now - tweetHashtag.Tweet.DateTime < DateTime.Now - DateTime.Now.AddDays(-7))
+            else if (nowDateTime - tweetDateTime < nowDateTime - nowDateTime.AddDays(-7))
             {
-                hashtagCount.TweetsPer[0] += 100;
+                tweetsPer[0] += 100;
             }
         }
 
         // Determine which hour the tweet occured on and add 100 to the index of the hour
         private void AddTweetPerHour(TweetHashtag tweetHashtag, HashtagCount hashtagCount)
         {
-            if (tweetHashtag.Tweet.DateTime.Hour == 0)
+            Tweet tweet = context.Tweets.First(t => t.ID == tweetHashtag.TweetID);
+            int tweetHour = tweet.DateTime.Hour;
+            var tweetsPer = hashtagCount.TweetsPer;
+
+            switch (tweetHour)
             {
-                hashtagCount.TweetsPer[0] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 1)
-            {
-                hashtagCount.TweetsPer[1] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 2)
-            {
-                hashtagCount.TweetsPer[2] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 3)
-            {
-                hashtagCount.TweetsPer[3] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 4)
-            {
-                hashtagCount.TweetsPer[4] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 5)
-            {
-                hashtagCount.TweetsPer[5] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 6)
-            {
-                hashtagCount.TweetsPer[6] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 7)
-            {
-                hashtagCount.TweetsPer[7] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 8)
-            {
-                hashtagCount.TweetsPer[8] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 9)
-            {
-                hashtagCount.TweetsPer[9] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 10)
-            {
-                hashtagCount.TweetsPer[10] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 11)
-            {
-                hashtagCount.TweetsPer[11] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 12)
-            {
-                hashtagCount.TweetsPer[12] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 13)
-            {
-                hashtagCount.TweetsPer[13] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 14)
-            {
-                hashtagCount.TweetsPer[14] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 15)
-            {
-                hashtagCount.TweetsPer[15] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 16)
-            {
-                hashtagCount.TweetsPer[16] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 17)
-            {
-                hashtagCount.TweetsPer[17] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 18)
-            {
-                hashtagCount.TweetsPer[18] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 19)
-            {
-                hashtagCount.TweetsPer[19] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 20)
-            {
-                hashtagCount.TweetsPer[20] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 21)
-            {
-                hashtagCount.TweetsPer[21] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 22)
-            {
-                hashtagCount.TweetsPer[22] += 100;
-            }
-            else if (tweetHashtag.Tweet.DateTime.Hour == 23)
-            {
-                hashtagCount.TweetsPer[23] += 100;
+                case 0:
+                    tweetsPer[0] += 100;
+                    break;
+                case 1:
+                    tweetsPer[1] += 100;
+                    break;
+                case 2:
+                    tweetsPer[2] += 100;
+                    break;
+                case 3:
+                    tweetsPer[3] += 100;
+                    break;
+                case 4:
+                    tweetsPer[4] += 100;
+                    break;
+                case 5:
+                    tweetsPer[5] += 100;
+                    break;
+                case 6:
+                    tweetsPer[6] += 100;
+                    break;
+                case 7:
+                    tweetsPer[7] += 100;
+                    break;
+                case 8:
+                    tweetsPer[8] += 100;
+                    break;
+                case 9:
+                    tweetsPer[9] += 100;
+                    break;
+                case 10:
+                    tweetsPer[10] += 100;
+                    break;
+                case 11:
+                    tweetsPer[11] += 100;
+                    break;
+                case 12:
+                    tweetsPer[12] += 100;
+                    break;
+                case 13:
+                    tweetsPer[13] += 100;
+                    break;
+                case 14:
+                    tweetsPer[14] += 100;
+                    break;
+                case 15:
+                    tweetsPer[15] += 100;
+                    break;
+                case 16:
+                    tweetsPer[16] += 100;
+                    break;
+                case 17:
+                    tweetsPer[17] += 100;
+                    break;
+                case 18:
+                    tweetsPer[18] += 100;
+                    break;
+                case 19:
+                    tweetsPer[19] += 100;
+                    break;
+                case 20:
+                    tweetsPer[20] += 100;
+                    break;
+                case 21:
+                    tweetsPer[21] += 100;
+                    break;
+                case 22:
+                    tweetsPer[22] += 100;
+                    break;
+                case 23:
+                    tweetsPer[23] += 100;
+                    break;
             }
         }
 
         // Determine which minute range the tweet occured on and add 100 to the index of the minute range
         private void AddTweetPerMinute(TweetHashtag tweetHashtag, HashtagCount hashtagCount)
         {
-            if (tweetHashtag.Tweet.DateTime.Minute < 6)
+            Tweet tweet = context.Tweets.First(t => t.ID == tweetHashtag.TweetID);
+            var tweetMinute = tweet.DateTime.Minute;
+            var tweetsPer = hashtagCount.TweetsPer;
+
+            if (tweetMinute < 6)
             {
-                hashtagCount.TweetsPer[0] += 100;
+                tweetsPer[0] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 11)
+            else if (tweetMinute < 11)
             {
-                hashtagCount.TweetsPer[1] += 100;
+                tweetsPer[1] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 16)
+            else if (tweetMinute < 16)
             {
-                hashtagCount.TweetsPer[2] += 100;
+                tweetsPer[2] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 21)
+            else if (tweetMinute < 21)
             {
-                hashtagCount.TweetsPer[3] += 100;
+                tweetsPer[3] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 26)
+            else if (tweetMinute < 26)
             {
-                hashtagCount.TweetsPer[4] += 100;
+                tweetsPer[4] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 31)
+            else if (tweetMinute < 31)
             {
-                hashtagCount.TweetsPer[5] += 100;
+                tweetsPer[5] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 36)
+            else if (tweetMinute < 36)
             {
-                hashtagCount.TweetsPer[6] += 100;
+                tweetsPer[6] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 41)
+            else if (tweetMinute < 41)
             {
-                hashtagCount.TweetsPer[7] += 100;
+                tweetsPer[7] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 46)
+            else if (tweetMinute < 46)
             {
-                hashtagCount.TweetsPer[8] += 100;
+                tweetsPer[8] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 51)
+            else if (tweetMinute < 51)
             {
-                hashtagCount.TweetsPer[9] += 100;
+                tweetsPer[9] += 100;
             }
-            else if (tweetHashtag.Tweet.DateTime.Minute < 55)
+            else if (tweetMinute < 55)
             {
-                hashtagCount.TweetsPer[10] += 100;
+                tweetsPer[10] += 100;
             }
             else
             {
-                hashtagCount.TweetsPer[11] += 100;
+                tweetsPer[11] += 100;
             }
         }
     }

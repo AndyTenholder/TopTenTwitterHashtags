@@ -11,9 +11,10 @@ using TwitterWebMVCv2.Data;
 namespace TwitterWebMVCv2.Migrations
 {
     [DbContext(typeof(TweetDbContext))]
-    partial class TweetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180127010703_DateTimeIndex")]
+    partial class DateTimeIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -20,109 +20,109 @@ namespace TwitterWebMVCv2
             // or stream logic will not be called
             var host = BuildWebHost(args);
 
-            //// Getting scope to allow retrieval of DbContext
-            //var scope = host.Services.GetService<IServiceScopeFactory>().CreateScope();
-            //context = scope.ServiceProvider.GetRequiredService<TweetDbContext>();
+            // Getting scope to allow retrieval of DbContext
+            var scope = host.Services.GetService<IServiceScopeFactory>().CreateScope();
+            context = scope.ServiceProvider.GetRequiredService<TweetDbContext>();
 
-            //// Set up your credentials (https://apps.twitter.com)
-            //// Applies credentials for the current thread.If used for the first time, set up the ApplicationCredentials
-            //Auth.SetUserCredentials("5Za8wv3dg9cL1JpMkZ69xHiYR", "q3ieBRSIQGJOXzXjtAuSySHcFQwiKHgKCEccDSbyMYxGc5GbbT", "858816969759444992-ZOBHLzMEq4V9TV6XbYVFk9z9auNRt8v", "gEUnPo24s7dMUbvr0QyfHCbFKbWbzF8XV6F9WXtaudRYc");
-            //var user = User.GetAuthenticatedUser();
+            // Set up your credentials (https://apps.twitter.com)
+            // Applies credentials for the current thread.If used for the first time, set up the ApplicationCredentials
+            Auth.SetUserCredentials("5Za8wv3dg9cL1JpMkZ69xHiYR", "q3ieBRSIQGJOXzXjtAuSySHcFQwiKHgKCEccDSbyMYxGc5GbbT", "858816969759444992-ZOBHLzMEq4V9TV6XbYVFk9z9auNRt8v", "gEUnPo24s7dMUbvr0QyfHCbFKbWbzF8XV6F9WXtaudRYc");
+            var user = User.GetAuthenticatedUser();
 
-            //// Enable Automatic RateLimit handling
-            //RateLimit.RateLimitTrackerMode = RateLimitTrackerMode.TrackAndAwait;
+            // Enable Automatic RateLimit handling
+            RateLimit.RateLimitTrackerMode = RateLimitTrackerMode.TrackAndAwait;
 
-            //var stream = Stream.CreateSampleStream();
-
-
-            ///* Using Async version of StartStreamMatchingAnyCondition method
-            // * without Async the API stream will hold up the stack
-            // * shifting it onto another thread allows host.run() to be called 
-            // * and the web app to run normally
-            // */
-            //stream.StartStreamAsync();
-
-            //stream.TweetReceived += (sender, recievedTweet) =>
-            //{
-            //    if (recievedTweet.Tweet.Hashtags.Count() > 0)
-            //    {
+            var stream = Stream.CreateSampleStream();
 
 
-            //        Language tweetLanguage;
+            /* Using Async version of StartStreamMatchingAnyCondition method
+             * without Async the API stream will hold up the stack
+             * shifting it onto another thread allows host.run() to be called 
+             * and the web app to run normally
+             */
+            stream.StartStreamAsync();
 
-            //        // if language is in DB retrieve it else create new langauge object and save to DB
-            //        if (GetLanguage(recievedTweet.Tweet.Language.ToString()) != null)
-            //        {
-            //            tweetLanguage = GetLanguage(recievedTweet.Tweet.Language.ToString());
-            //        }
-            //        else
-            //        {
-            //            Language newLanguage = new Language
-            //            {
-            //                Name = recievedTweet.Tweet.Language.ToString()
-            //            };
-            //            context.Languages.Add(newLanguage);
-            //            context.SaveChanges();
-            //            tweetLanguage = newLanguage;
-            //        }
+            stream.TweetReceived += (sender, recievedTweet) =>
+            {
+                if (recievedTweet.Tweet.Hashtags.Count() > 0)
+                {
 
-            //        // Create new tweet object and add to db
-            //        Models.Tweet newTweet = new Models.Tweet
-            //        {
-            //            Language = tweetLanguage,
-            //            DateTime = recievedTweet.Tweet.CreatedAt
-            //        };
-            //        context.Tweets.Add(newTweet);
-            //        context.SaveChanges();
 
-            //        // if hashtag is in DB retrieve it else create new hashtag object and save to DB
-            //        List<Hashtag> hashtagList = new List<Hashtag>();
+                    Language tweetLanguage;
 
-            //        foreach (var hashtag in recievedTweet.Tweet.Hashtags)
-            //        {
-            //            // Convert hashtag to uppercase string
-            //            var upperHashtag = hashtag.ToString().ToUpper();
+                    // if language is in DB retrieve it else create new langauge object and save to DB
+                    if (GetLanguage(recievedTweet.Tweet.Language.ToString()) != null)
+                    {
+                        tweetLanguage = GetLanguage(recievedTweet.Tweet.Language.ToString());
+                    }
+                    else
+                    {
+                        Language newLanguage = new Language
+                        {
+                            Name = recievedTweet.Tweet.Language.ToString()
+                        };
+                        context.Languages.Add(newLanguage);
+                        context.SaveChanges();
+                        tweetLanguage = newLanguage;
+                    }
 
-            //            if (GetHashtag(upperHashtag) != null)
-            //            {
-            //                Hashtag tweetHashtag = GetHashtag(upperHashtag);
+                    // Create new tweet object and add to db
+                    Models.Tweet newTweet = new Models.Tweet
+                    {
+                        Language = tweetLanguage,
+                        DateTime = recievedTweet.Tweet.CreatedAt
+                    };
+                    context.Tweets.Add(newTweet);
+                    context.SaveChanges();
 
-            //                if (!hashtagList.Contains(tweetHashtag))
-            //                {
-            //                    hashtagList.Add(tweetHashtag);
-            //                }
-            //            }
-            //            else
-            //            {
-            //                Hashtag newHashtag = new Hashtag
-            //                {
-            //                    Name = hashtag.ToString().ToUpper()
-            //                };
-            //                context.Hashtags.Add(newHashtag);
-            //                context.SaveChanges();
-            //                if (!hashtagList.Contains(newHashtag))
-            //                {
-            //                    hashtagList.Add(newHashtag);
-            //                }
-            //            }
-            //        }
+                    // if hashtag is in DB retrieve it else create new hashtag object and save to DB
+                    List<Hashtag> hashtagList = new List<Hashtag>();
 
-            //        // Create TweetHashtag object for each hashtag
-            //        foreach (var hashtag in hashtagList)
-            //        {
-            //            TweetHashtag tweetHashtag = new TweetHashtag
-            //            {
-            //                Tweet = newTweet,
-            //                TweetID = newTweet.ID,
-            //                Hashtag = hashtag,
-            //                HashtagID = hashtag.ID
-            //            };
+                    foreach (var hashtag in recievedTweet.Tweet.Hashtags)
+                    {
+                        // Convert hashtag to uppercase string
+                        var upperHashtag = hashtag.ToString().ToUpper();
 
-            //            context.TweetHashtags.Add(tweetHashtag);
-            //            context.SaveChanges();
-            //        }
-            //    };
-            //};
+                        if (GetHashtag(upperHashtag) != null)
+                        {
+                            Hashtag tweetHashtag = GetHashtag(upperHashtag);
+
+                            if (!hashtagList.Contains(tweetHashtag))
+                            {
+                                hashtagList.Add(tweetHashtag);
+                            }
+                        }
+                        else
+                        {
+                            Hashtag newHashtag = new Hashtag
+                            {
+                                Name = hashtag.ToString().ToUpper()
+                            };
+                            context.Hashtags.Add(newHashtag);
+                            context.SaveChanges();
+                            if (!hashtagList.Contains(newHashtag))
+                            {
+                                hashtagList.Add(newHashtag);
+                            }
+                        }
+                    }
+
+                    // Create TweetHashtag object for each hashtag
+                    foreach (var hashtag in hashtagList)
+                    {
+                        TweetHashtag tweetHashtag = new TweetHashtag
+                        {
+                            Tweet = newTweet,
+                            TweetID = newTweet.ID,
+                            Hashtag = hashtag,
+                            HashtagID = hashtag.ID
+                        };
+
+                        context.TweetHashtags.Add(tweetHashtag);
+                        context.SaveChanges();
+                    }
+                };
+            };
 
 
 

@@ -35,44 +35,62 @@
 
 @*Tweets Each Hour Line Graph Logic*@
 @{
-    @*Random object used to create random colors*@
-Random rnd = new Random();
 
-List<string> tweetLabelList = new List<string>();
-List<int> tweetDataList = new List<int>();
+    List<int> hashtag0DataList = new List<int>();
+    List<int> hashtag1DataList = new List<int>();
 
-    @*Chose to have random color for line graph becuase pie chart colors are random*@
-string TweetColor = String.Format("rgba({0},{1},{2},0.6)", rnd.Next(256), rnd.Next(256), rnd.Next(256));
-for (int i = 0; i < Model.HourHashtagCounts.Count(); i++)
-{
-    tweetDataList.Add(Model.HourHashtagCounts[i].TweetsPer[i]);
-}
+    for (int i = 0; i < 12; i++)
+    {
+        hashtag0DataList.Add(Model.HourHashtagCounts[0].TweetsPer[i]);
+        hashtag1DataList.Add(Model.HourHashtagCounts[1].TweetsPer[i]);
+    }
 }
 @*graphs made using the Charts.js Lib http://www.chartjs.org/*@
 <canvas id="TweetsPerHourChart"></canvas>
 @{
-    for (int i = 0; i < Model.HourHashtagCounts.Count(); i++)
+    for (int i = 0; i < 10; i++)
     {
-        <button id="@Model.HourHashtagCounts[i].Hashtag.Name.ToString()">@Model.HourHashtagCounts[i].Hashtag.Name.ToString()</button>
+        <button id="button @i">@Model.HourHashtagCounts[i].Hashtag.Name.ToString()</button>
     }
 }
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
 <script>
+
+    var button0IsOn = true;
+    var button1IsOn = true;
+    var button2IsOn = true;
+    var button3IsOn = false;
+    var button4IsOn = false;
+    var button5IsOn = false;
+    var button6IsOn = false;
+    var button7IsOn = false;
+    var button8IsOn = false;
+    var button9IsOn = false;
+
     var MINUTES = ["5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"];
     var HOURS = ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"];
     var DAYS = ["1", "2", "3", "4", "5", "6", "7"];
-    var ctx = document.getElementById("TweetsPerHourChart");
-    var TweetsPerHourChart = new Chart(ctx, {
+
+    var TweetsPerHourChart = {
         type: 'line',
         data: {
-            labels: [MINUTES],
+            labels: MINUTES,
             datasets: [{
-                label: '# of Tweets',
-                backgroundColor: "@TweetColor",
+                label: '@Model.HourHashtagCounts[0].Hashtag.Name.ToString()',
+                backgroundColor: "#0074D9",
+                borderColor: "#0074D9",
                 @*C# list must be converted to JSON object to be used by Chart.js lib*@
-                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(tweetDataList)),
+                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag0DataList)),
+                fill: false
+            },{
+                label: '@Model.HourHashtagCounts[1].Hashtag.Name.ToString()',
+                backgroundColor: "#7FDBFF",
+                borderColor: "#7FDBFF",
+                @*C# list must be converted to JSON object to be used by Chart.js lib*@
+                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag1DataList)),
+                fill: false
             }]
         },
         options: {
@@ -97,114 +115,41 @@ for (int i = 0; i < Model.HourHashtagCounts.Count(); i++)
             responsive: true,
             maintainAspectRatio: true
         }
-    });
-</script>
-<br/> 
-<script>
-    var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    var config = {
-        type: 'line',
-        data: {
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
-            datasets: [{
-                label: "My First dataset",
-                backgroundColor: window.chartColors.red,
-                borderColor: window.chartColors.red,
-                data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
-                ],
-                fill: false,
-            }, {
-                label: "My Second dataset",
-                fill: false,
-                backgroundColor: window.chartColors.blue,
-                borderColor: window.chartColors.blue,
-                data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
-                ],
-            }]
-        },
-        options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: 'Chart.js Line Chart'
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
-            },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            scales: {
-                xAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Month'
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Value'
-                    }
-                }]
-            }
-        }
     };
 
     window.onload = function () {
         var ctx = document.getElementById("TweetsPerHourChart").getContext("2d");
-        window.myLine = new Chart(ctx, config);
+        window.myLine = new Chart(ctx, TweetsPerHourChart);
     };
 
-    document.getElementById('randomizeData').addEventListener('click', function () {
-        config.data.datasets.forEach(function (dataset) {
-            dataset.data = dataset.data.map(function () {
-                return randomScalingFactor();
-            });
+    document.getElementById('button 0').addEventListener('click', function () {
+        @{ int index1 = 0;}
+        if (button0IsOn) {
+            var button0Array = []
+            @{ index1 = 0;}
+            for (var index = 0; index < TweetsPerHourChart.data.labels.length; ++index) {
+                button0Array.push(@Model.HourHashtagCounts[0].TweetsPer[index1]);
+                @index1++;
+            }
+            TweetsPerHourChart.data.datasets.splice(TweetsPerHourChart.data.datasets.indexOf(button0Array),1);
+            window.myLine.update();
 
-        });
+        } else {
 
-        window.myLine.update();
-    });
-
-    var 
-    var colorNames = Object.keys(window.chartColors);
-    document.getElementById('addDataset').addEventListener('click', function () {
-        var colorName = colorNames[config.data.datasets.length % colorNames.length];
-        var newColor = window.chartColors[colorName];
-        var newDataset = {
-            label: 'Dataset ' + config.data.datasets.length,
-            backgroundColor: newColor,
-            borderColor: newColor,
-            data: [],
-            fill: false
-        };
-
-        for (var index = 0; index < config.data.labels.length; ++index) {
-            newDataset.data.push(randomScalingFactor());
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[0].Hashtag.Name.ToString()",
+                backgroundColor: '#0074D9',
+                borderColor: '#0074D9',
+                data: [],
+                fill: false
+            };
+            @{ index1 = 0;}
+            for (var index = 0; index < config.data.labels.length; ++index) {
+                newDataset.data.push(@Model.HourHashtagCounts[0].TweetsPer[index1]);
+                @index1++;
+            }
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            window.myLine.update();
         }
-
-        config.data.datasets.push(newDataset);
-        window.myLine.update();
     });
-
 </script>
-

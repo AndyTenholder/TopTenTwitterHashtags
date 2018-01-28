@@ -35,6 +35,7 @@ namespace TwitterWebMVCv2
         {
             if (env.IsDevelopment())
             {
+                app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
             }

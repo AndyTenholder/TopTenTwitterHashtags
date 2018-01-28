@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Chart.js" Version="2.7.1" />
+    <PackageReference Include="StackifyMiddleware" Version="2.0.3" />
     <PackageReference Include="TweetinviAPI" Version="2.1.0" />
   </ItemGroup>
 

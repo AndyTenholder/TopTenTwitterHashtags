@@ -33,16 +33,32 @@
     </tr>
 </table>
 
-@*Tweets Each Hour Line Graph Logic*@
+@*Tweets Each Hour Line Graph Datasets*@
 @{
 
     List<int> hashtag0DataList = new List<int>();
     List<int> hashtag1DataList = new List<int>();
+    List<int> hashtag2DataList = new List<int>();
+    List<int> hashtag3DataList = new List<int>();
+    List<int> hashtag4DataList = new List<int>();
+    List<int> hashtag5DataList = new List<int>();
+    List<int> hashtag6DataList = new List<int>();
+    List<int> hashtag7DataList = new List<int>();
+    List<int> hashtag8DataList = new List<int>();
+    List<int> hashtag9DataList = new List<int>();
 
     for (int i = 0; i < 12; i++)
     {
         hashtag0DataList.Add(Model.HourHashtagCounts[0].TweetsPer[i]);
         hashtag1DataList.Add(Model.HourHashtagCounts[1].TweetsPer[i]);
+        hashtag2DataList.Add(Model.HourHashtagCounts[2].TweetsPer[i]);
+        hashtag3DataList.Add(Model.HourHashtagCounts[3].TweetsPer[i]);
+        hashtag4DataList.Add(Model.HourHashtagCounts[4].TweetsPer[i]);
+        hashtag5DataList.Add(Model.HourHashtagCounts[5].TweetsPer[i]);
+        hashtag6DataList.Add(Model.HourHashtagCounts[6].TweetsPer[i]);
+        hashtag7DataList.Add(Model.HourHashtagCounts[7].TweetsPer[i]);
+        hashtag8DataList.Add(Model.HourHashtagCounts[8].TweetsPer[i]);
+        hashtag9DataList.Add(Model.HourHashtagCounts[9].TweetsPer[i]);
     }
 }
 @*graphs made using the Charts.js Lib http://www.chartjs.org/*@
@@ -57,10 +73,20 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
 <script>
+    var hashtag0DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag0DataList));
+    var hashtag1DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag1DataList));
+    var hashtag2DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag2DataList));
+    var hashtag3DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag3DataList));
+    var hashtag4DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag4DataList));
+    var hashtag5DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag5DataList));
+    var hashtag6DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag6DataList));
+    var hashtag7DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag7DataList));
+    var hashtag8DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag8DataList));
+    var hashtag9DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag9DataList));
 
     var button0IsOn = true;
     var button1IsOn = true;
-    var button2IsOn = true;
+    var button2IsOn = false;
     var button3IsOn = false;
     var button4IsOn = false;
     var button5IsOn = false;
@@ -81,15 +107,13 @@
                 label: '@Model.HourHashtagCounts[0].Hashtag.Name.ToString()',
                 backgroundColor: "#0074D9",
                 borderColor: "#0074D9",
-                @*C# list must be converted to JSON object to be used by Chart.js lib*@
-                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag0DataList)),
+                data: hashtag0DataListJSON,
                 fill: false
             },{
                 label: '@Model.HourHashtagCounts[1].Hashtag.Name.ToString()',
                 backgroundColor: "#7FDBFF",
                 borderColor: "#7FDBFF",
-                @*C# list must be converted to JSON object to be used by Chart.js lib*@
-                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag1DataList)),
+                data: hashtag1DataListJSON,
                 fill: false
             }]
         },
@@ -122,34 +146,362 @@
         window.myLine = new Chart(ctx, TweetsPerHourChart);
     };
 
-    document.getElementById('button 0').addEventListener('click', function () {
-        @{ int index1 = 0;}
+    document.getElementById("button 0").addEventListener("click", function () {
         if (button0IsOn) {
-            var button0Array = []
-            @{ index1 = 0;}
-            for (var index = 0; index < TweetsPerHourChart.data.labels.length; ++index) {
-                button0Array.push(@Model.HourHashtagCounts[0].TweetsPer[index1]);
-                @index1++;
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[0].Hashtag.Name.ToString()",
+                backgroundColor: "#0074D9",
+                borderColor: "#0074D9",
+                data: hashtag0DataListJSON,
+                fill: false
+            };
+             var searchTerm = "@Model.HourHashtagCounts[0].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
             }
-            TweetsPerHourChart.data.datasets.splice(TweetsPerHourChart.data.datasets.indexOf(button0Array),1);
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button0IsOn = false;
             window.myLine.update();
 
         } else {
 
             var newDataset = {
                 label: "@Model.HourHashtagCounts[0].Hashtag.Name.ToString()",
-                backgroundColor: '#0074D9',
-                borderColor: '#0074D9',
-                data: [],
+                backgroundColor: "#0074D9",
+                borderColor: "#0074D9",
+                data: hashtag0DataListJSON,
                 fill: false
             };
-            @{ index1 = 0;}
-            for (var index = 0; index < config.data.labels.length; ++index) {
-                newDataset.data.push(@Model.HourHashtagCounts[0].TweetsPer[index1]);
-                @index1++;
-            }
             TweetsPerHourChart.data.datasets.push(newDataset);
+            button0IsOn = true;
             window.myLine.update();
-        }
+        };
+    });
+
+     document.getElementById("button 1").addEventListener("click", function () {
+        if (button1IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[1].Hashtag.Name.ToString()",
+                backgroundColor: "#7FDBFF",
+                borderColor: "#7FDBFF",
+                data: hashtag1DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[1].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button1IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[1].Hashtag.Name.ToString()",
+                backgroundColor: "#7FDBFF",
+                borderColor: "#7FDBFF",
+                data: hashtag1DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button1IsOn = true;
+            window.myLine.update();
+        };
+    });
+    document.getElementById("button 2").addEventListener("click", function () {
+        if (button2IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[2].Hashtag.Name.ToString()",
+                backgroundColor: "#39CCCC",
+                borderColor: "#39CCCC",
+                data: hashtag2DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[2].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button2IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[2].Hashtag.Name.ToString()",
+                backgroundColor: "#39CCCC",
+                borderColor: "#39CCCC",
+                data: hashtag2DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button2IsOn = true;
+            window.myLine.update();
+        };
+     });
+
+    document.getElementById("button 3").addEventListener("click", function () {
+        if (button3IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[3].Hashtag.Name.ToString()",
+                backgroundColor: "#3D9970",
+                borderColor: "#3D9970",
+                data: hashtag3DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[3].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button3IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[3].Hashtag.Name.ToString()",
+                backgroundColor: "#3D9970",
+                borderColor: "#3D9970",
+                data: hashtag3DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button3IsOn = true;
+            window.myLine.update();
+        };
+    });
+
+    document.getElementById("button 4").addEventListener("click", function () {
+        if (button4IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[4].Hashtag.Name.ToString()",
+                backgroundColor: "#2ECC40",
+                borderColor: "#2ECC40",
+                data: hashtag4DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[4].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button4IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[4].Hashtag.Name.ToString()",
+                backgroundColor: "#2ECC40",
+                borderColor: "#2ECC40",
+                data: hashtag4DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button4IsOn = true;
+            window.myLine.update();
+        };
+    });
+
+    document.getElementById("button 5").addEventListener("click", function () {
+        if (button5IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[5].Hashtag.Name.ToString()",
+                backgroundColor: "#FFDC00",
+                borderColor: "#FFDC00",
+                data: hashtag5DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[5].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button5IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[5].Hashtag.Name.ToString()",
+                backgroundColor: "#FFDC00",
+                borderColor: "#FFDC00",
+                data: hashtag5DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button5IsOn = true;
+            window.myLine.update();
+        };
+    });
+
+    document.getElementById("button 6").addEventListener("click", function () {
+        if (button6IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[6].Hashtag.Name.ToString()",
+                backgroundColor: "#FF851B",
+                borderColor: "#FF851B",
+                data: hashtag6DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[6].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button6IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[6].Hashtag.Name.ToString()",
+                backgroundColor: "#FF851B",
+                borderColor: "#FF851B",
+                data: hashtag6DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button6IsOn = true;
+            window.myLine.update();
+        };
+    });
+
+    document.getElementById("button 7").addEventListener("click", function () {
+        if (button7IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[7].Hashtag.Name.ToString()",
+                backgroundColor: "#FF4136",
+                borderColor: "#FF4136",
+                data: hashtag7DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[7].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button7IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[7].Hashtag.Name.ToString()",
+                backgroundColor: "#FF4136",
+                borderColor: "#FF4136",
+                data: hashtag7DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button7IsOn = true;
+            window.myLine.update();
+        };
+    });
+
+    document.getElementById("button 8").addEventListener("click", function () {
+        if (button8IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[8].Hashtag.Name.ToString()",
+                backgroundColor: "#85144b",
+                borderColor: "#85144b",
+                data: hashtag8DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[8].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button8IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[8].Hashtag.Name.ToString()",
+                backgroundColor: "#85144b",
+                borderColor: "#85144b",
+                data: hashtag8DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button8IsOn = true;
+            window.myLine.update();
+        };
+    });
+
+    document.getElementById("button 9").addEventListener("click", function () {
+        if (button9IsOn) {
+            var dataSet = {
+                label: "@Model.HourHashtagCounts[9].Hashtag.Name.ToString()",
+                backgroundColor: "#B10DC9",
+                borderColor: "#B10DC9",
+                data: hashtag9DataListJSON,
+                fill: false
+            };
+            var searchTerm = "@Model.HourHashtagCounts[9].Hashtag.Name.ToString()",
+                pos = -1;
+            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
+                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
+                    pos = i;
+                    break;
+                }
+            }
+            TweetsPerHourChart.data.datasets.splice(pos, 1);
+            button9IsOn = false;
+            window.myLine.update();
+
+        } else {
+
+            var newDataset = {
+                label: "@Model.HourHashtagCounts[9].Hashtag.Name.ToString()",
+                backgroundColor: "#B10DC9",
+                borderColor: "#B10DC9",
+                data: hashtag9DataListJSON,
+                fill: false
+            };
+            TweetsPerHourChart.data.datasets.push(newDataset);
+            button9IsOn = true;
+            window.myLine.update();
+        };
     });
 </script>

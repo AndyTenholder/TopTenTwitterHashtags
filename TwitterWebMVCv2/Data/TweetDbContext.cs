@@ -18,8 +18,12 @@ namespace TwitterWebMVCv2.Data
         {
             modelBuilder.Entity<TweetHashtag>()
                 .HasKey(t => new { t.HashtagID, t.TweetID });
+            modelBuilder.Entity<TweetHashtag>()
+                .HasIndex(tht => tht.HashtagID);
             modelBuilder.Entity<Tweet>()
                 .HasIndex(t => t.DateTime);
+            modelBuilder.Entity<Hashtag>()
+                .HasIndex(h => h.ID);
         }
     }
 }

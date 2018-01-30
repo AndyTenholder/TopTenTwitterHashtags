@@ -16,6 +16,7 @@
     </svg>
     #Hashtags!
 </h1>
+
 <button id="getHourData">Hour</button>
 <button id="getDayData">Day</button>
 <button id="getWeekData">Week</button>
@@ -35,7 +36,6 @@
 
 @*Tweets Each Hour Line Graph Datasets*@
 @{
-
     List<int> hashtag0DataList = new List<int>();
     List<int> hashtag1DataList = new List<int>();
     List<int> hashtag2DataList = new List<int>();
@@ -61,59 +61,99 @@
         hashtag9DataList.Add(Model.HourHashtagCounts[9].TweetsPer[i]);
     }
 }
-@*graphs made using the Charts.js Lib http://www.chartjs.org/*@
-<canvas id="TweetsPerHourChart"></canvas>
-@{
-    for (int i = 0; i < 10; i++)
-    {
-        <button id="button @i">@Model.HourHashtagCounts[i].Hashtag.Name.ToString()</button>
-    }
-}
 
+@*graph made using the Charts.js Lib http://www.chartjs.org/*@
+<canvas id="LineGraph"></canvas>
+
+@*buttons will be used to toggle data for each hashtag on and off in the graph*@
+<button id="hashtag0Button">@Model.HourHashtagCounts[0].Hashtag.Name.ToString()</button>
+<button id="hashtag1Button">@Model.HourHashtagCounts[1].Hashtag.Name.ToString()</button>
+<button id="hashtag2Button">@Model.HourHashtagCounts[2].Hashtag.Name.ToString()</button>
+<button id="hashtag3Button">@Model.HourHashtagCounts[3].Hashtag.Name.ToString()</button>
+<button id="hashtag4Button">@Model.HourHashtagCounts[4].Hashtag.Name.ToString()</button>
+<button id="hashtag5Button">@Model.HourHashtagCounts[5].Hashtag.Name.ToString()</button>
+<button id="hashtag6Button">@Model.HourHashtagCounts[6].Hashtag.Name.ToString()</button>
+<button id="hashtag7Button">@Model.HourHashtagCounts[7].Hashtag.Name.ToString()</button>
+<button id="hashtag8Button">@Model.HourHashtagCounts[8].Hashtag.Name.ToString()</button>
+<button id="hashtag9Button">@Model.HourHashtagCounts[9].Hashtag.Name.ToString()</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
 <script>
-    var hashtag0DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag0DataList));
-    var hashtag1DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag1DataList));
-    var hashtag2DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag2DataList));
-    var hashtag3DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag3DataList));
-    var hashtag4DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag4DataList));
-    var hashtag5DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag5DataList));
-    var hashtag6DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag6DataList));
-    var hashtag7DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag7DataList));
-    var hashtag8DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag8DataList));
-    var hashtag9DataListJSON =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag9DataList));
+    @*convert C# lists of hashtag data to JSON*@
+    var hashtag0DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag0DataList));
+    var hashtag1DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag1DataList));
+    var hashtag2DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag2DataList));
+    var hashtag3DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag3DataList));
+    var hashtag4DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag4DataList));
+    var hashtag5DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag5DataList));
+    var hashtag6DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag6DataList));
+    var hashtag7DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag7DataList));
+    var hashtag8DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag8DataList));
+    var hashtag9DataListJSON = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(hashtag9DataList));
 
-    var button0IsOn = true;
-    var button1IsOn = true;
-    var button2IsOn = false;
-    var button3IsOn = false;
-    var button4IsOn = false;
-    var button5IsOn = false;
-    var button6IsOn = false;
-    var button7IsOn = false;
-    var button8IsOn = false;
-    var button9IsOn = false;
+    @*Retrieve and save the string name of each hashtag*@
+    var hashtag0Name = "@Model.HourHashtagCounts[0].Hashtag.Name.ToString()"
+    var hashtag1Name = "@Model.HourHashtagCounts[1].Hashtag.Name.ToString()"
+    var hashtag2Name = "@Model.HourHashtagCounts[2].Hashtag.Name.ToString()"
+    var hashtag3Name = "@Model.HourHashtagCounts[3].Hashtag.Name.ToString()"
+    var hashtag4Name = "@Model.HourHashtagCounts[4].Hashtag.Name.ToString()"
+    var hashtag5Name = "@Model.HourHashtagCounts[5].Hashtag.Name.ToString()"
+    var hashtag6Name = "@Model.HourHashtagCounts[6].Hashtag.Name.ToString()"
+    var hashtag7Name = "@Model.HourHashtagCounts[7].Hashtag.Name.ToString()"
+    var hashtag8Name = "@Model.HourHashtagCounts[8].Hashtag.Name.ToString()"
+    var hashtag9Name = "@Model.HourHashtagCounts[9].Hashtag.Name.ToString()"
 
-    var MINUTES = ["5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"];
-    var HOURS = ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"];
-    var DAYS = ["1", "2", "3", "4", "5", "6", "7"];
+    @*Boolean to save hashtag button state *@
+    @*First 3 are set to true because the page will load with them being displayed in the graph*@
+    var hashtag0ButtonIsOn = true;
+    var hashtag1ButtonIsOn = true;
+    var hashtag2ButtonIsOn = true;
+    var hashtag3ButtonIsOn = false;
+    var hashtag4ButtonIsOn = false;
+    var hashtag5ButtonIsOn = false;
+    var hashtag6ButtonIsOn = false;
+    var hashtag7ButtonIsOn = false;
+    var hashtag8ButtonIsOn = false;
+    var hashtag9ButtonIsOn = false;
 
-    var TweetsPerHourChart = {
+    var hashtag0Color = "#0074D9";
+    var hashtag1Color = "#7FDBFF";
+    var hashtag2Color = "#39CCCC";
+    var hashtag3Color = "#3D9970";
+    var hashtag4Color = "#2ECC40";
+    var hashtag5Color = "#FFDC00";
+    var hashtag6Color = "#FF851B";
+    var hashtag7Color = "#FF4136";
+    var hashtag8Color = "#85144b";
+    var hashtag9Color = "#B10DC9";
+
+    @* Constats to be used as labels for the X axis of the graph*@
+    var MINUTESAGO = ["5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"];
+    var HOURSOFDAY = ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"];
+    var DAYSAGO = ["1", "2", "3", "4", "5", "6", "7"];
+
+    @*Logic for Charts.js line graph*@
+    var LineGraph = {
         type: 'line',
         data: {
             labels: MINUTES,
             datasets: [{
-                label: '@Model.HourHashtagCounts[0].Hashtag.Name.ToString()',
-                backgroundColor: "#0074D9",
-                borderColor: "#0074D9",
+                label: hashtag0Name,
+                backgroundColor: hashtag0Color,
+                borderColor: hashtag0Color,
                 data: hashtag0DataListJSON,
                 fill: false
             },{
-                label: '@Model.HourHashtagCounts[1].Hashtag.Name.ToString()',
-                backgroundColor: "#7FDBFF",
-                borderColor: "#7FDBFF",
+                label: hashtag1Name,
+                backgroundColor: hashtag1Color,
+                borderColor: hashtag1Color,
                 data: hashtag1DataListJSON,
+                fill: false
+            }, {
+                label: hashtag2Name,
+                backgroundColor: hashtag2Color,
+                borderColor: hashtag2Color,
+                data: hashtag2DataListJSON,
                 fill: false
             }]
         },
@@ -141,367 +181,144 @@
         }
     };
 
+    @*Load linegraph on page load*@
     window.onload = function () {
-        var ctx = document.getElementById("TweetsPerHourChart").getContext("2d");
-        window.myLine = new Chart(ctx, TweetsPerHourChart);
+        var ctx = document.getElementById("LineGraph").getContext("2d");
+        window.myLine = new Chart(ctx, LineGraph);
     };
 
-    document.getElementById("button 0").addEventListener("click", function () {
-        if (button0IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[0].Hashtag.Name.ToString()",
-                backgroundColor: "#0074D9",
-                borderColor: "#0074D9",
-                data: hashtag0DataListJSON,
-                fill: false
-            };
-             var searchTerm = "@Model.HourHashtagCounts[0].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button0IsOn = false;
-            window.myLine.update();
-
-        } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[0].Hashtag.Name.ToString()",
-                backgroundColor: "#0074D9",
-                borderColor: "#0074D9",
-                data: hashtag0DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button0IsOn = true;
-            window.myLine.update();
+    @*Add a dataset to the linegraph*@
+    function addDataset(labelName, color, dataList) {
+        var newDataset = {
+            label: labelName,
+            backgroundColor: color,
+            borderColor: color,
+            data: dataList,
+            fill: false
         };
+        LineGraph.data.datasets.push(newDataset);
+    }
+
+    @*Remove a dataset from the graph where the label name equals the search term*@
+    function removeDataset(searchTerm) {
+        var pos = -1;
+        var len = LineGraph.data.datasets.length;
+        for (var i = 0; i < len; i++) {
+            if (LineGraph.data.datasets[i].label === searchTerm) {
+                pos = i;
+                break;
+            }
+        }
+        LineGraph.data.datasets.splice(pos, 1);
+    }
+
+    @*Toggle button booleen true or false*@
+    function toggleButton(buttonIsOn) {
+        buttonIsOn = !buttonIsOn
+    }
+
+    @*Set on click listener for each button*@
+    @*If button is already on, remove the corresponding data set*@
+    @*If the button is off, add dataset to the graph*@
+    @*toggle the button and then update the canvas*@
+
+    document.getElementById("hashtag0Button").addEventListener("click", function () {
+        if (hashtag0ButtonIsOn) {
+            removeDataset(hashtag0Name);
+        } else {
+            addDataset(hashtag0Name, hashtag0Color, hashtag0DataListJSON)
+        };
+        toggleButton(hashtag0ButtonIsOn);
+        window.myLine.update();
     });
 
-     document.getElementById("button 1").addEventListener("click", function () {
-        if (button1IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[1].Hashtag.Name.ToString()",
-                backgroundColor: "#7FDBFF",
-                borderColor: "#7FDBFF",
-                data: hashtag1DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[1].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button1IsOn = false;
-            window.myLine.update();
-
+    document.getElementById("hashtag1Button").addEventListener("click", function () {
+        if (hashtag1ButtonIsOn) {
+            removeDataset(hashtag1Name);
         } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[1].Hashtag.Name.ToString()",
-                backgroundColor: "#7FDBFF",
-                borderColor: "#7FDBFF",
-                data: hashtag1DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button1IsOn = true;
-            window.myLine.update();
+            addDataset(hashtag1Name, hashtag1Color, hashtag1DataListJSON)
         };
-    });
-    document.getElementById("button 2").addEventListener("click", function () {
-        if (button2IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[2].Hashtag.Name.ToString()",
-                backgroundColor: "#39CCCC",
-                borderColor: "#39CCCC",
-                data: hashtag2DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[2].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button2IsOn = false;
-            window.myLine.update();
-
-        } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[2].Hashtag.Name.ToString()",
-                backgroundColor: "#39CCCC",
-                borderColor: "#39CCCC",
-                data: hashtag2DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button2IsOn = true;
-            window.myLine.update();
-        };
-     });
-
-    document.getElementById("button 3").addEventListener("click", function () {
-        if (button3IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[3].Hashtag.Name.ToString()",
-                backgroundColor: "#3D9970",
-                borderColor: "#3D9970",
-                data: hashtag3DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[3].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button3IsOn = false;
-            window.myLine.update();
-
-        } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[3].Hashtag.Name.ToString()",
-                backgroundColor: "#3D9970",
-                borderColor: "#3D9970",
-                data: hashtag3DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button3IsOn = true;
-            window.myLine.update();
-        };
+        toggleButton(hashtag1ButtonIsOn);
+        window.myLine.update();
     });
 
-    document.getElementById("button 4").addEventListener("click", function () {
-        if (button4IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[4].Hashtag.Name.ToString()",
-                backgroundColor: "#2ECC40",
-                borderColor: "#2ECC40",
-                data: hashtag4DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[4].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button4IsOn = false;
-            window.myLine.update();
-
+    document.getElementById("hashtag2Button").addEventListener("click", function () {
+        if (hashtag2ButtonIsOn) {
+            removeDataset(hashtag2Name);
         } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[4].Hashtag.Name.ToString()",
-                backgroundColor: "#2ECC40",
-                borderColor: "#2ECC40",
-                data: hashtag4DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button4IsOn = true;
-            window.myLine.update();
+            addDataset(hashtag2Name, hashtag2Color, hashtag2DataListJSON)
         };
+        toggleButton(hashtag2ButtonIsOn);
+        window.myLine.update();
     });
 
-    document.getElementById("button 5").addEventListener("click", function () {
-        if (button5IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[5].Hashtag.Name.ToString()",
-                backgroundColor: "#FFDC00",
-                borderColor: "#FFDC00",
-                data: hashtag5DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[5].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button5IsOn = false;
-            window.myLine.update();
-
+    document.getElementById("hashtag3Button").addEventListener("click", function () {
+        if (hashtag3ButtonIsOn) {
+            removeDataset(hashtag3Name);
         } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[5].Hashtag.Name.ToString()",
-                backgroundColor: "#FFDC00",
-                borderColor: "#FFDC00",
-                data: hashtag5DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button5IsOn = true;
-            window.myLine.update();
+            addDataset(hashtag3Name, hashtag3Color, hashtag3DataListJSON)
         };
+        toggleButton(hashtag3ButtonIsOn);
+        window.myLine.update();
     });
 
-    document.getElementById("button 6").addEventListener("click", function () {
-        if (button6IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[6].Hashtag.Name.ToString()",
-                backgroundColor: "#FF851B",
-                borderColor: "#FF851B",
-                data: hashtag6DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[6].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button6IsOn = false;
-            window.myLine.update();
-
+    document.getElementById("hashtag4Button").addEventListener("click", function () {
+        if (hashtag4ButtonIsOn) {
+            removeDataset(hashtag4Name);
         } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[6].Hashtag.Name.ToString()",
-                backgroundColor: "#FF851B",
-                borderColor: "#FF851B",
-                data: hashtag6DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button6IsOn = true;
-            window.myLine.update();
+            addDataset(hashtag4Name, hashtag4Color, hashtag4DataListJSON)
         };
+        toggleButton(hashtag4ButtonIsOn);
+        window.myLine.update();
     });
 
-    document.getElementById("button 7").addEventListener("click", function () {
-        if (button7IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[7].Hashtag.Name.ToString()",
-                backgroundColor: "#FF4136",
-                borderColor: "#FF4136",
-                data: hashtag7DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[7].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button7IsOn = false;
-            window.myLine.update();
-
+    document.getElementById("hashtag5Button").addEventListener("click", function () {
+        if (hashtag5ButtonIsOn) {
+            removeDataset(hashtag5Name);
         } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[7].Hashtag.Name.ToString()",
-                backgroundColor: "#FF4136",
-                borderColor: "#FF4136",
-                data: hashtag7DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button7IsOn = true;
-            window.myLine.update();
+            addDataset(hashtag5Name, hashtag5Color, hashtag5DataListJSON)
         };
+        toggleButton(hashtag5ButtonIsOn);
+        window.myLine.update();
     });
 
-    document.getElementById("button 8").addEventListener("click", function () {
-        if (button8IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[8].Hashtag.Name.ToString()",
-                backgroundColor: "#85144b",
-                borderColor: "#85144b",
-                data: hashtag8DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[8].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button8IsOn = false;
-            window.myLine.update();
-
+    document.getElementById("hashtag6Button").addEventListener("click", function () {
+        if (hashtag6ButtonIsOn) {
+            removeDataset(hashtag6Name);
         } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[8].Hashtag.Name.ToString()",
-                backgroundColor: "#85144b",
-                borderColor: "#85144b",
-                data: hashtag8DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button8IsOn = true;
-            window.myLine.update();
+            addDataset(hashtag6Name, hashtag6Color, hashtag6DataListJSON)
         };
+        toggleButton(hashtag6ButtonIsOn);
+        window.myLine.update();
     });
 
-    document.getElementById("button 9").addEventListener("click", function () {
-        if (button9IsOn) {
-            var dataSet = {
-                label: "@Model.HourHashtagCounts[9].Hashtag.Name.ToString()",
-                backgroundColor: "#B10DC9",
-                borderColor: "#B10DC9",
-                data: hashtag9DataListJSON,
-                fill: false
-            };
-            var searchTerm = "@Model.HourHashtagCounts[9].Hashtag.Name.ToString()",
-                pos = -1;
-            for (var i = 0, len = TweetsPerHourChart.data.datasets.length; i < len; i++) {
-                if (TweetsPerHourChart.data.datasets[i].label === searchTerm) {
-                    pos = i;
-                    break;
-                }
-            }
-            TweetsPerHourChart.data.datasets.splice(pos, 1);
-            button9IsOn = false;
-            window.myLine.update();
-
+    document.getElementById("hashtag7Button").addEventListener("click", function () {
+        if (hashtag7ButtonIsOn) {
+            removeDataset(hashtag7Name);
         } else {
-
-            var newDataset = {
-                label: "@Model.HourHashtagCounts[9].Hashtag.Name.ToString()",
-                backgroundColor: "#B10DC9",
-                borderColor: "#B10DC9",
-                data: hashtag9DataListJSON,
-                fill: false
-            };
-            TweetsPerHourChart.data.datasets.push(newDataset);
-            button9IsOn = true;
-            window.myLine.update();
+            addDataset(hashtag7Name, hashtag7Color, hashtag7DataListJSON)
         };
+        toggleButton(hashtag7ButtonIsOn);
+        window.myLine.update();
+    });
+
+    document.getElementById("hashtag8Button").addEventListener("click", function () {
+        if (hashtag8ButtonIsOn) {
+            removeDataset(hashtag8Name);
+        } else {
+            addDataset(hashtag8Name, hashtag8Color, hashtag8DataListJSON)
+        };
+        toggleButton(hashtag8ButtonIsOn);
+        window.myLine.update();
+    });
+
+    document.getElementById("hashtag9Button").addEventListener("click", function () {
+        if (hashtag9ButtonIsOn) {
+            removeDataset(hashtag9Name);
+        } else {
+            addDataset(hashtag9Name, hashtag9Color, hashtag9DataListJSON)
+        };
+        toggleButton(hashtag9ButtonIsOn);
+        window.myLine.update();
     });
 </script>

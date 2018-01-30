@@ -63,7 +63,7 @@
 }
 
 @*graph made using the Charts.js Lib http://www.chartjs.org/*@
-<canvas id="LineGraph"></canvas>
+<canvas id="GraphCanvas"></canvas>
 
 @*buttons will be used to toggle data for each hashtag on and off in the graph*@
 <button id="hashtag0Button">@Model.HourHashtagCounts[0].Hashtag.Name.ToString()</button>
@@ -133,10 +133,10 @@
     var DAYSAGO = ["1", "2", "3", "4", "5", "6", "7"];
 
     @*Logic for Charts.js line graph*@
-    var LineGraph = {
+    var Graph = {
         type: 'line',
         data: {
-            labels: MINUTES,
+            labels: MINUTESAGO,
             datasets: [{
                 label: hashtag0Name,
                 backgroundColor: hashtag0Color,
@@ -183,8 +183,8 @@
 
     @*Load linegraph on page load*@
     window.onload = function () {
-        var ctx = document.getElementById("LineGraph").getContext("2d");
-        window.myLine = new Chart(ctx, LineGraph);
+        var ctx = document.getElementById("GraphCanvas").getContext("2d");
+        window.myLine = new Chart(ctx, Graph);
     };
 
     @*Add a dataset to the linegraph*@
@@ -196,26 +196,22 @@
             data: dataList,
             fill: false
         };
-        LineGraph.data.datasets.push(newDataset);
+        Graph.data.datasets.push(newDataset);
     }
 
     @*Remove a dataset from the graph where the label name equals the search term*@
     function removeDataset(searchTerm) {
         var pos = -1;
-        var len = LineGraph.data.datasets.length;
+        var len = Graph.data.datasets.length;
         for (var i = 0; i < len; i++) {
-            if (LineGraph.data.datasets[i].label === searchTerm) {
+            if (Graph.data.datasets[i].label === searchTerm) {
                 pos = i;
                 break;
             }
         }
-        LineGraph.data.datasets.splice(pos, 1);
+        Graph.data.datasets.splice(pos, 1);
     }
 
-    @*Toggle button booleen true or false*@
-    function toggleButton(buttonIsOn) {
-        buttonIsOn = !buttonIsOn
-    }
 
     @*Set on click listener for each button*@
     @*If button is already on, remove the corresponding data set*@
@@ -228,7 +224,7 @@
         } else {
             addDataset(hashtag0Name, hashtag0Color, hashtag0DataListJSON)
         };
-        toggleButton(hashtag0ButtonIsOn);
+        hashtag0ButtonIsOn = !hashtag0ButtonIsOn;
         window.myLine.update();
     });
 
@@ -238,7 +234,7 @@
         } else {
             addDataset(hashtag1Name, hashtag1Color, hashtag1DataListJSON)
         };
-        toggleButton(hashtag1ButtonIsOn);
+        hashtag1ButtonIsOn = !hashtag1ButtonIsOn;
         window.myLine.update();
     });
 
@@ -248,7 +244,7 @@
         } else {
             addDataset(hashtag2Name, hashtag2Color, hashtag2DataListJSON)
         };
-        toggleButton(hashtag2ButtonIsOn);
+        hashtag2ButtonIsOn = !hashtag2ButtonIsOn;
         window.myLine.update();
     });
 
@@ -258,7 +254,7 @@
         } else {
             addDataset(hashtag3Name, hashtag3Color, hashtag3DataListJSON)
         };
-        toggleButton(hashtag3ButtonIsOn);
+        hashtag3ButtonIsOn = !hashtag3ButtonIsOn;
         window.myLine.update();
     });
 
@@ -268,7 +264,7 @@
         } else {
             addDataset(hashtag4Name, hashtag4Color, hashtag4DataListJSON)
         };
-        toggleButton(hashtag4ButtonIsOn);
+        hashtag4ButtonIsOn = !hashtag4ButtonIsOn;
         window.myLine.update();
     });
 
@@ -278,7 +274,7 @@
         } else {
             addDataset(hashtag5Name, hashtag5Color, hashtag5DataListJSON)
         };
-        toggleButton(hashtag5ButtonIsOn);
+        hashtag5ButtonIsOn = !hashtag5ButtonIsOn;
         window.myLine.update();
     });
 
@@ -288,7 +284,7 @@
         } else {
             addDataset(hashtag6Name, hashtag6Color, hashtag6DataListJSON)
         };
-        toggleButton(hashtag6ButtonIsOn);
+        hashtag6ButtonIsOn = !hashtag6ButtonIsOn;
         window.myLine.update();
     });
 
@@ -298,7 +294,7 @@
         } else {
             addDataset(hashtag7Name, hashtag7Color, hashtag7DataListJSON)
         };
-        toggleButton(hashtag7ButtonIsOn);
+        hashtag7ButtonIsOn = !hashtag7ButtonIsOn;
         window.myLine.update();
     });
 
@@ -308,7 +304,7 @@
         } else {
             addDataset(hashtag8Name, hashtag8Color, hashtag8DataListJSON)
         };
-        toggleButton(hashtag8ButtonIsOn);
+        hashtag8ButtonIsOn = !hashtag8ButtonIsOn;
         window.myLine.update();
     });
 
@@ -318,7 +314,7 @@
         } else {
             addDataset(hashtag9Name, hashtag9Color, hashtag9DataListJSON)
         };
-        toggleButton(hashtag9ButtonIsOn);
+        hashtag9ButtonIsOn = !hashtag9ButtonIsOn;
         window.myLine.update();
     });
 </script>

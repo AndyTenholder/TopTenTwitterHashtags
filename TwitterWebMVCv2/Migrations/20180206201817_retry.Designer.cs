@@ -11,8 +11,8 @@ using TwitterWebMVCv2.Data;
 namespace TwitterWebMVCv2.Migrations
 {
     [DbContext(typeof(TweetDbContext))]
-    [Migration("20180127010703_DateTimeIndex")]
-    partial class DateTimeIndex
+    [Migration("20180206201817_retry")]
+    partial class retry
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,6 +29,8 @@ namespace TwitterWebMVCv2.Migrations
                     b.Property<string>("Name");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ID");
 
                     b.ToTable("Hashtags");
                 });
@@ -54,6 +56,8 @@ namespace TwitterWebMVCv2.Migrations
 
                     b.Property<int>("LanguageID");
 
+                    b.Property<string>("TweetIdString");
+
                     b.HasKey("ID");
 
                     b.HasIndex("DateTime");
@@ -70,6 +74,8 @@ namespace TwitterWebMVCv2.Migrations
                     b.Property<int>("TweetID");
 
                     b.HasKey("HashtagID", "TweetID");
+
+                    b.HasIndex("HashtagID");
 
                     b.HasIndex("TweetID");
 

@@ -86,9 +86,13 @@ namespace TwitterWebMVCv2.Controllers
 
             // Sort HashtagCounts by TimesUsed
             hashtagCounts.Sort(new HashtagCountComparer());
-            // Drop all but Top 10 Hashtags
-            hashtagCounts.RemoveRange(10, hashtagCounts.Count - 10);
 
+            if (hashtagCounts.Count > 10)
+            {
+                // Drop all but Top 10 Hashtags
+                hashtagCounts.RemoveRange(10, hashtagCounts.Count - 10);
+            }
+            
             return hashtagCounts;
         }
 

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TwitterWebMVCv2.Migrations
 {
-    public partial class init : Migration
+    public partial class retry : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,7 +42,8 @@ namespace TwitterWebMVCv2.Migrations
                     ID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     DateTime = table.Column<DateTime>(nullable: false),
-                    LanguageID = table.Column<int>(nullable: false)
+                    LanguageID = table.Column<int>(nullable: false),
+                    TweetIdString = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -80,9 +81,24 @@ namespace TwitterWebMVCv2.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Hashtags_ID",
+                table: "Hashtags",
+                column: "ID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TweetHashtags_HashtagID",
+                table: "TweetHashtags",
+                column: "HashtagID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TweetHashtags_TweetID",
                 table: "TweetHashtags",
                 column: "TweetID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tweets_DateTime",
+                table: "Tweets",
+                column: "DateTime");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tweets_LanguageID",

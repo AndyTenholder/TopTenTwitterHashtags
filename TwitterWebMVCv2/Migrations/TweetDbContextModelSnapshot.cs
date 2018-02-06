@@ -55,6 +55,8 @@ namespace TwitterWebMVCv2.Migrations
 
                     b.Property<int>("LanguageID");
 
+                    b.Property<string>("TweetIdString");
+
                     b.HasKey("ID");
 
                     b.HasIndex("DateTime");

@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Properties\PublishProfiles\Top10Hashtags - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\TopTenHashtags - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\TopTwitterHashTags - Web Deploy.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Chart.js" Version="2.7.1" />
     <PackageReference Include="StackifyMiddleware" Version="2.0.3" />
     <PackageReference Include="TweetinviAPI" Version="2.1.0" />
@@ -25,6 +31,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 
 </Project>

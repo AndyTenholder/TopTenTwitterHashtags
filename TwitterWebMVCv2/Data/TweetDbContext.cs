@@ -14,10 +14,17 @@ namespace TwitterWebMVCv2.Data
             : base(options)
         { }
 
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(@"Server=tcp:toptenhashtags-server.database.windows.net,1433;Initial Catalog=toptenhashtags-db;Persist Security Info=False;User ID=AndyTenholder@toptenhashtags-server;Password=4Br0wnC0w5;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TweetHashtag>()
-                .HasKey(t => new { t.HashtagID, t.TweetID });
             modelBuilder.Entity<TweetHashtag>()
                 .HasIndex(tht => tht.HashtagID);
             modelBuilder.Entity<Tweet>()

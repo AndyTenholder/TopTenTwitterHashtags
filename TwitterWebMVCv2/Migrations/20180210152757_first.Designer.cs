@@ -11,9 +11,10 @@ using TwitterWebMVCv2.Data;
 namespace TwitterWebMVCv2.Migrations
 {
     [DbContext(typeof(TweetDbContext))]
-    partial class TweetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180210152757_first")]
+    partial class first
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,18 +69,15 @@ namespace TwitterWebMVCv2.Migrations
 
             modelBuilder.Entity("TwitterWebMVCv2.Models.TweetHashtag", b =>
                 {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("DateTime");
-
                     b.Property<int>("HashtagID");
 
                     b.Property<int>("TweetID");
 
-                    b.HasKey("ID");
+                    b.HasKey("HashtagID", "TweetID");
 
                     b.HasIndex("HashtagID");
+
+                    b.HasIndex("TweetID");
 
                     b.ToTable("TweetHashtags");
                 });
@@ -89,6 +87,19 @@ namespace TwitterWebMVCv2.Migrations
                     b.HasOne("TwitterWebMVCv2.Models.Language", "Language")
                         .WithMany("Tweets")
                         .HasForeignKey("LanguageID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TwitterWebMVCv2.Models.TweetHashtag", b =>
+                {
+                    b.HasOne("TwitterWebMVCv2.Models.Hashtag", "Hashtag")
+                        .WithMany("TweetHashtags")
+                        .HasForeignKey("HashtagID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TwitterWebMVCv2.Models.Tweet", "Tweet")
+                        .WithMany("TweetHashtags")
+                        .HasForeignKey("TweetID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

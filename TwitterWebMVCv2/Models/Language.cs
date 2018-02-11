@@ -6,8 +6,6 @@ namespace TwitterWebMVCv2.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-
         public IList<Tweet> Tweets { get; set; }
-
     }
 }

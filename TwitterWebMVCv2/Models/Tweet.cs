@@ -13,7 +13,5 @@ namespace TwitterWebMVCv2.Models
         public int LanguageID { get; set; }
         // Navigation prop
         public Language Language { get; set; }
-
-        public IList<TweetHashtag> TweetHashtags { get; set; }
     }
 }

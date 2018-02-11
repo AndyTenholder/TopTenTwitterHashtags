@@ -11,8 +11,8 @@ using TwitterWebMVCv2.Data;
 namespace TwitterWebMVCv2.Migrations
 {
     [DbContext(typeof(TweetDbContext))]
-    [Migration("20180206201817_retry")]
-    partial class retry
+    [Migration("20180211133640_update")]
+    partial class update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -69,15 +69,18 @@ namespace TwitterWebMVCv2.Migrations
 
             modelBuilder.Entity("TwitterWebMVCv2.Models.TweetHashtag", b =>
                 {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateTime");
+
                     b.Property<int>("HashtagID");
 
                     b.Property<int>("TweetID");
 
-                    b.HasKey("HashtagID", "TweetID");
+                    b.HasKey("ID");
 
                     b.HasIndex("HashtagID");
-
-                    b.HasIndex("TweetID");
 
                     b.ToTable("TweetHashtags");
                 });
@@ -87,19 +90,6 @@ namespace TwitterWebMVCv2.Migrations
                     b.HasOne("TwitterWebMVCv2.Models.Language", "Language")
                         .WithMany("Tweets")
                         .HasForeignKey("LanguageID")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("TwitterWebMVCv2.Models.TweetHashtag", b =>
-                {
-                    b.HasOne("TwitterWebMVCv2.Models.Hashtag", "Hashtag")
-                        .WithMany("TweetHashtags")
-                        .HasForeignKey("HashtagID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("TwitterWebMVCv2.Models.Tweet", "Tweet")
-                        .WithMany("TweetHashtags")
-                        .HasForeignKey("TweetID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

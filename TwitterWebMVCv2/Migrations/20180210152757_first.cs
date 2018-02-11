@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TwitterWebMVCv2.Migrations
 {
-    public partial class retry : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

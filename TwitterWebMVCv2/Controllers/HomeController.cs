@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TwitterWebMVCv2.Models;
 using TwitterWebMVCv2.Data;
 using TwitterWebMVCv2.CountObjects;
 using TwitterWebMVCv2.Comparers;
 using TwitterWebMVCv2.ViewModels;
-using System.Data.SqlClient;
-using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace TwitterWebMVCv2.Controllers
 {
@@ -19,7 +17,7 @@ namespace TwitterWebMVCv2.Controllers
 
         private TweetDbContext context;
 
-        DateTime dateTimeNow = DateTime.Now;
+        DateTime dateTimeNow = DateTime.UtcNow;
 
         public HomeController(TweetDbContext dbContext)
         {
@@ -40,11 +38,11 @@ namespace TwitterWebMVCv2.Controllers
 
         private List<HashtagCount> GetTopTenHour()
         {
-            var tweetHashtags = from th in context.TweetHashtags
-                                where th.DateTime > dateTimeNow.AddHours(-1)
-                                select th;
+            DateTime dateTimeMinusHour = dateTimeNow.AddHours(-1);
+            Int32 unixTimestampMinusHour = (Int32)(dateTimeMinusHour.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
-            IEnumerable<Tweet> tweets = context.Tweets.Where(t => DateTime.Parse(t.DateTime.ToString()) > dateTimeNow.AddHours(-1));
+            var tweetHashtags = context.TweetHashtags.FromSql("SELECT * FROM TweetHashtags WHERE UnixTimeStamp>{0}", unixTimestampMinusHour);
+            IEnumerable<Tweet> tweets = context.Tweets.Where(t => t.UnixTimeStamp > unixTimestampMinusHour);
             IEnumerable<int> tweetHashtagIds = (tweetHashtags.Select(tht => tht.HashtagID)).ToList();
             IEnumerable<Hashtag> hashTags = context.Hashtags.Where(ht => tweetHashtagIds.Contains(ht.ID));
                       
@@ -67,7 +65,7 @@ namespace TwitterWebMVCv2.Controllers
                     // Twitter API stream only gives 1% of all tweets
                     // So each hashtag collected will be counted 100 times
                     hashtagCount.TimesUsed += 100;
-                    AddTweetPerMinute(tweetHashtag, hashtagCount);
+                    AddTweetPerMinute(tweetHashtag, hashtagCount, tweets);
                 }
                 else
                 {
@@ -84,7 +82,7 @@ namespace TwitterWebMVCv2.Controllers
                     };
                     // adds 100 to the correct 5 minute interval 0-11
                     Tweet tweet = tweets.Single(t => t.ID == tweetHashtag.TweetID);
-                    newHashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - tweet.DateTime).Minutes / 5.0))] += 100;
+                    newHashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
 
                     hashtagCounts.Add(newHashtagCount);
                     hashtagStringList.Add(hashTag.Name);
@@ -102,6 +100,21 @@ namespace TwitterWebMVCv2.Controllers
             }
             
             return hashtagCounts;
+        }
+
+        public static DateTime UnixTimeStampToDateTime(int unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
+
+        private void AddTweetPerMinute(TweetHashtag tweetHashtag, HashtagCount hashtagCount, IEnumerable<Tweet> tweets)
+        {
+
+            Tweet tweet = tweets.First(t => t.ID == tweetHashtag.TweetID);
+            hashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
         }
 
         //    private List<HashtagCount> GetTopTenDay()
@@ -235,12 +248,7 @@ namespace TwitterWebMVCv2.Controllers
         //    }
 
         // Determine how many minutes ago the tweet occured and add 100 to the index of the minute range
-        private void AddTweetPerMinute(TweetHashtag tweetHashtag, HashtagCount hashtagCount)
-        {
 
-            Tweet tweet = context.Tweets.First(t => t.ID == tweetHashtag.TweetID);
-            hashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - tweet.DateTime).Minutes / 5.0))] += 100;
-        }
-        
+
     }
 }

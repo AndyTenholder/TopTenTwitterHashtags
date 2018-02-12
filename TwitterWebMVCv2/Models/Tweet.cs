@@ -7,7 +7,7 @@ namespace TwitterWebMVCv2.Models
     {
         public int ID { get; set; }
         public string TweetIdString { get; set; }
-        public DateTime DateTime { get; set; }
+        public int UnixTimeStamp { get; set; }
 
         // foreign key
         public int LanguageID { get; set; }

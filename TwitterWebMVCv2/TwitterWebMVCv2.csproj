@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Properties\PublishProfiles\HashtagsDebug2 - Web Deploy.pubxml" />
     <None Remove="Properties\PublishProfiles\Top10Hashtags - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\TopTenDebug - Web Deploy.pubxml" />
     <None Remove="Properties\PublishProfiles\TopTenHashtags - Web Deploy.pubxml" />
     <None Remove="Properties\PublishProfiles\TopTwitterHashTags - Web Deploy.pubxml" />
   </ItemGroup>

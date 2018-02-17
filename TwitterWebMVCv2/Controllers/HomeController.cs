@@ -41,10 +41,10 @@ namespace TwitterWebMVCv2.Controllers
             DateTime dateTimeMinusHour = dateTimeNow.AddHours(-1);
             Int32 unixTimestampMinusHour = (Int32)(dateTimeMinusHour.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
-            var tweetHashtags = context.TweetHashtags.FromSql("SELECT * FROM TweetHashtags WHERE UnixTimeStamp>{0}", unixTimestampMinusHour);
-            IEnumerable<Tweet> tweets = context.Tweets.Where(t => t.UnixTimeStamp > unixTimestampMinusHour);
+            var tweetHashtags = context.TweetHashtags.FromSql("SELECT * FROM TweetHashtags WHERE UnixTimeStamp>{0}", unixTimestampMinusHour).ToList();
+            IEnumerable<Tweet> tweets = context.Tweets.Where(t => t.UnixTimeStamp > unixTimestampMinusHour).ToList();
             IEnumerable<int> tweetHashtagIds = (tweetHashtags.Select(tht => tht.HashtagID)).ToList();
-            IEnumerable<Hashtag> hashTags = context.Hashtags.Where(ht => tweetHashtagIds.Contains(ht.ID));
+            IEnumerable<Hashtag> hashTags = context.Hashtags.Where(ht => tweetHashtagIds.Contains(ht.ID)).ToList(); ;
                       
             // HastagCount objects contain a Hashtag object, TimesUsed int, and an int[] TweetsPer
             // HashtagCounts keep track of the number of times a hashtag was used
@@ -53,42 +53,80 @@ namespace TwitterWebMVCv2.Controllers
             // List to keep track of which hashtags already have a HashtagCount object
             // Will not be passed to ViewModel
             List<string> hashtagStringList = new List<string>();
+            List<int> hashtagIdList = new List<int>();
+            List<HashtagIdCount> hashtagIdCounts = new List<HashtagIdCount>();
 
-            foreach (TweetHashtag tweetHashtag in tweetHashtags)
+            foreach(TweetHashtag tweetHashtag in tweetHashtags)
             {
-
-                Hashtag hashTag = hashTags.Single(h => h.ID == tweetHashtag.HashtagID);
-
-                if (hashtagStringList != null && hashtagStringList.Contains(hashTag.Name.ToString()))
+                if (hashtagIdList != null && hashtagIdList.Contains(tweetHashtag.HashtagID))
                 {
-                    HashtagCount hashtagCount = hashtagCounts.Single(hc => hc.Hashtag == hashTag);
-                    // Twitter API stream only gives 1% of all tweets
-                    // So each hashtag collected will be counted 100 times
-                    hashtagCount.TimesUsed += 100;
-                    AddTweetPerMinute(tweetHashtag, hashtagCount, tweets);
+                    HashtagIdCount hashtagIdCount = hashtagIdCounts.Single(hid => hid.HashtagId == tweetHashtag.HashtagID);
+                    hashtagIdCount.TimesUsed += 1;
+                    hashtagIdCount.TweetHashtags.Add(tweetHashtag);
                 }
                 else
                 {
-                    HashtagCount newHashtagCount = new HashtagCount
+                    HashtagIdCount newHashtagIdCount = new HashtagIdCount
                     {
-                        Hashtag = hashTag,
+                        HashtagId = tweetHashtag.HashtagID,
+                        TimesUsed = 1,
+                        TweetHashtags = new List<TweetHashtag>()
+                    };
+                    newHashtagIdCount.TweetHashtags.Add(tweetHashtag);
+                    hashtagIdCounts.Add(newHashtagIdCount);
+                    hashtagIdList.Add(newHashtagIdCount.HashtagId);
+                }
+
+            }
+            // Sort HashtagCounts by TimesUsed
+            hashtagIdCounts.Sort(new HashtagIdCountComparer());
+
+            if (hashtagIdCounts.Count > 10)
+            {
+                // Drop all but Top 10 Hashtags
+                hashtagIdCounts.RemoveRange(10, hashtagIdCounts.Count - 10);
+            }
+
+            foreach (HashtagIdCount hashtagIdCount in hashtagIdCounts)
+            {
+                foreach (TweetHashtag tweetHashtag in hashtagIdCount.TweetHashtags)
+                {
+                    Hashtag hashTag = hashTags.Single(h => h.ID == tweetHashtag.HashtagID);
+
+                    if (hashtagStringList != null && hashtagStringList.Contains(hashTag.Name.ToString()))
+                    {
+                        HashtagCount hashtagCount = hashtagCounts.Single(hc => hc.Hashtag == hashTag);
                         // Twitter API stream only gives 1% of all tweets
                         // So each hashtag collected will be counted 100 times
-                        TimesUsed = 100,
+                        hashtagCount.TimesUsed += 100;
+                        AddTweetPerMinute(tweetHashtag, hashtagCount, tweets);
+                    }
+                    else
+                    {
+                        HashtagCount newHashtagCount = new HashtagCount
+                        {
+                            Hashtag = hashTag,
+                            // Twitter API stream only gives 1% of all tweets
+                            // So each hashtag collected will be counted 100 times
+                            TimesUsed = 100,
 
-                        // int[] that stores data to be used in line graph
-                        // period is intervals for the X axis
-                        TweetsPer = new int[12]
-                    };
-                    // adds 100 to the correct 5 minute interval 0-11
-                    Tweet tweet = tweets.Single(t => t.ID == tweetHashtag.TweetID);
-                    newHashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
+                            // int[] that stores data to be used in line graph
+                            // period is intervals for the X axis
+                            TweetsPer = new int[12]
+                        };
+                        // adds 100 to the correct 5 minute interval 0-11
+                        Tweet tweet = tweets.SingleOrDefault(t => t.ID == tweetHashtag.TweetID);
+                        if (tweet != null)
+                        {
+                            newHashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
+                        }
 
-                    hashtagCounts.Add(newHashtagCount);
-                    hashtagStringList.Add(hashTag.Name);
+                        hashtagCounts.Add(newHashtagCount);
+                        hashtagStringList.Add(hashTag.Name);
+                    }
                 }
-                
             }
+            
 
             // Sort HashtagCounts by TimesUsed
             hashtagCounts.Sort(new HashtagCountComparer());
@@ -113,8 +151,11 @@ namespace TwitterWebMVCv2.Controllers
         private void AddTweetPerMinute(TweetHashtag tweetHashtag, HashtagCount hashtagCount, IEnumerable<Tweet> tweets)
         {
 
-            Tweet tweet = tweets.First(t => t.ID == tweetHashtag.TweetID);
-            hashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
+            Tweet tweet = tweets.SingleOrDefault(t => t.ID == tweetHashtag.TweetID);
+            if (tweet != null)
+            {
+                hashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
+            }
         }
 
         //    private List<HashtagCount> GetTopTenDay()

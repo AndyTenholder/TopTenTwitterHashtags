@@ -3,6 +3,10 @@
     ViewData["Title"] = "Top 10 #s";
 }
 <style>
+    .tableData:hover {
+        background-color: #0084b4;
+        color: white;
+    }
     .fade {
         opacity: 0.25;
     }
@@ -51,18 +55,69 @@
     </svg>
     #Hashtags!
 </h1>
+<br>
 
 @{
     if (Model.HourHashtagCounts.Count > 1)
     {
-        <table>
+        <table class="table">
             <tr>
-                <td>
+                <td class="tableData">
                     <ol>
-                        @for (int i = 0; i < 10; i++)
-                {
-                            <li><p>@Model.HourHashtagCounts[i].Hashtag.Name - @Model.HourHashtagCounts[i].TimesUsed</p></li>
-                        }
+                        <li value="1"><p>@Model.HourHashtagCounts[0].Hashtag.Name - @Model.HourHashtagCounts[0].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="6"><p>@Model.HourHashtagCounts[5].Hashtag.Name - @Model.HourHashtagCounts[5].TimesUsed</p></li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableData">
+                    <ol>
+                        <li value="2"><p>@Model.HourHashtagCounts[1].Hashtag.Name - @Model.HourHashtagCounts[1].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="7"><p>@Model.HourHashtagCounts[6].Hashtag.Name - @Model.HourHashtagCounts[6].TimesUsed</p></li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableData">
+                    <ol>
+                        <li value="3"><p>@Model.HourHashtagCounts[2].Hashtag.Name - @Model.HourHashtagCounts[2].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="8"><p>@Model.HourHashtagCounts[7].Hashtag.Name - @Model.HourHashtagCounts[7].TimesUsed</p></li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableData">
+                    <ol>
+                        <li value="4"><p>@Model.HourHashtagCounts[3].Hashtag.Name - @Model.HourHashtagCounts[3].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="9"><p>@Model.HourHashtagCounts[8].Hashtag.Name - @Model.HourHashtagCounts[8].TimesUsed</p></li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableData">
+                    <ol>
+                        <li value="5"><p>@Model.HourHashtagCounts[4].Hashtag.Name - @Model.HourHashtagCounts[4].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="10"><p>@Model.HourHashtagCounts[9].Hashtag.Name - @Model.HourHashtagCounts[9].TimesUsed</p></li>
                     </ol>
                 </td>
             </tr>

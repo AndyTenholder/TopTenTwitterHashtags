@@ -2,7 +2,35 @@
 @{
     ViewData["Title"] = "Top 10 #s";
 }
+<style>
 
+    .buttonSet{
+        margin: 10px 0px 0px 16px;
+    }
+    .button {
+        width: 17%;
+        outline: none;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: .8em;
+    }
+    .hashtag0Button {background-color: #0074D9;}
+    .hashtag1Button {background-color: #7FDBFF;}
+    .hashtag2Button {background-color: #39CCCC;}
+    .hashtag3Button {background-color: #3D9970;}
+    .hashtag4Button {background-color: #2ECC40;}
+    .hashtag5Button {background-color: #FFDC00;}
+    .hashtag6Button {background-color: #FF851B;}
+    .hashtag7Button {background-color: #FF4136;}
+    .hashtag8Button {background-color: #85144b;}
+    .hashtag9Button {background-color: #B10DC9;}
+
+</style>
 <h1>
     The Top 10
     @*SVG Twitter bird image*@
@@ -16,10 +44,6 @@
     </svg>
     #Hashtags!
 </h1>
-
-<button id="getHourData">Hour</button>
-<button id="getDayData">Day</button>
-<button id="getWeekData">Week</button>
 
 @{
     if (Model.HourHashtagCounts.Count > 1)
@@ -38,9 +62,6 @@
         </table>
     }
 }
-
-
-
 
 
 @{
@@ -79,16 +100,21 @@
         <canvas id="GraphCanvas"></canvas>
 
         @*buttons will be used to toggle data for each hashtag on and off in the graph*@
-        <button id="hashtag0Button">@Model.HourHashtagCounts[0].Hashtag.Name.ToString()</button>
-        <button id="hashtag1Button">@Model.HourHashtagCounts[1].Hashtag.Name.ToString()</button>
-        <button id="hashtag2Button">@Model.HourHashtagCounts[2].Hashtag.Name.ToString()</button>
-        <button id="hashtag3Button">@Model.HourHashtagCounts[3].Hashtag.Name.ToString()</button>
-        <button id="hashtag4Button">@Model.HourHashtagCounts[4].Hashtag.Name.ToString()</button>
-        <button id="hashtag5Button">@Model.HourHashtagCounts[5].Hashtag.Name.ToString()</button>
-        <button id="hashtag6Button">@Model.HourHashtagCounts[6].Hashtag.Name.ToString()</button>
-        <button id="hashtag7Button">@Model.HourHashtagCounts[7].Hashtag.Name.ToString()</button>
-        <button id="hashtag8Button">@Model.HourHashtagCounts[8].Hashtag.Name.ToString()</button>
-        <button id="hashtag9Button">@Model.HourHashtagCounts[9].Hashtag.Name.ToString()</button>
+        <div id="buttonSetTop" class="buttonSet">
+            <button id="hashtag0Button" class="hashtag0Button button">@Model.HourHashtagCounts[0].Hashtag.Name.ToString()</button>
+            <button id="hashtag1Button" class="button hashtag1Button">@Model.HourHashtagCounts[1].Hashtag.Name.ToString()</button>
+            <button id="hashtag2Button" class="button hashtag2Button">@Model.HourHashtagCounts[2].Hashtag.Name.ToString()</button>
+            <button id="hashtag3Button" class="button hashtag3Button">@Model.HourHashtagCounts[3].Hashtag.Name.ToString()</button>
+            <button id="hashtag4Button" class="button hashtag4Button">@Model.HourHashtagCounts[4].Hashtag.Name.ToString()</button>
+        </div>
+        <div id="buttonSetBotton" class="buttonSet">
+            <button id="hashtag5Button" class="button hashtag5Button">@Model.HourHashtagCounts[5].Hashtag.Name.ToString()</button>
+            <button id="hashtag6Button" class="button hashtag6Button">@Model.HourHashtagCounts[6].Hashtag.Name.ToString()</button>
+            <button id="hashtag7Button" class="button hashtag7Button">@Model.HourHashtagCounts[7].Hashtag.Name.ToString()</button>
+            <button id="hashtag8Button" class="button hashtag8Button">@Model.HourHashtagCounts[8].Hashtag.Name.ToString()</button>
+            <button id="hashtag9Button" class="button hashtag9Button">@Model.HourHashtagCounts[9].Hashtag.Name.ToString()</button>
+        </div>
+        
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
         <script>

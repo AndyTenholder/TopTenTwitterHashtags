@@ -31,12 +31,64 @@ namespace TwitterWebMVCv2.Controllers
             //List<HashtagCount> dayTopTen = GetTopTenDay();
             //List<HashtagCount> weekTopTen = GetTopTenWeek();
 
-            HomeViewModel homeViewModel = new HomeViewModel(hourTopTen);
+            TopTenViewModel topTenViewModel = new TopTenViewModel(hourTopTen);
 
-            return View(homeViewModel);
+            return View(topTenViewModel);
         }
 
-        private List<HashtagCount> GetTopTenHour()
+        public IActionResult Hashtag(Hashtag hashtag)
+        {
+            IEnumerable<TweetHashtag> tweetHashtags = context.TweetHashtags.Where(th => th.HashtagID == hashtag.ID).ToList();
+            IEnumerable<TweetHashtag> tweethHashtagsPast24Hours = tweetHashtags.Where(th => UnixTimeStampToDateTime(th.UnixTimeStamp) > dateTimeNow.AddDays(-1));
+            List<Tweet> tweets = new List<Tweet>();
+
+            foreach (TweetHashtag th in tweethHashtagsPast24Hours)
+            {
+                Tweet tweet = context.Tweets.Single(t => t.ID == th.TweetID);
+                tweets.Add(tweet);
+            }
+
+            int totalTweets = tweets.Count * 100;
+
+            // Get total number of languages
+            List<Language> languages = context.Languages.ToList();
+            int totalLanguages = languages.Count;
+
+            // Sort languages by TimesUsed
+            languages.Sort(new LanguageComparer());
+            foreach (var language in languages)
+            {
+                language.TimesUsed = language.TimesUsed * 100;
+            }
+
+            // Get total number of Hashtags
+            List<Hashtag> hashtags = context.Hashtags.ToList();
+            int totalHashtags = hashtags.Count - 1;
+
+            // Sort hashtags by TimesUsed
+            hashtags.Sort(new HashtagComparer());
+            foreach (var hashtag in hashtags)
+            {
+                hashtag.TimesUsed = hashtag.TimesUsed * 100;
+            }
+
+            // Create array to hold number of tweets in each hour
+            int[] tweetsPerHour = new int[24];
+
+            foreach (var tweet in tweets)
+            {
+                // Get number of Tweets for each hour
+                int hour = UnixTimeStampToDateTime(tweet.UnixTimeStamp).Hour;
+                tweetsPerHour[hour] += 100;
+            }
+
+            HashtagViewModel hashtagViewModel = new HashtagViewModel(languages, hashtags, tweetsPerHour,
+                totalTweets, totalLanguages, totalHashtags);
+
+            return View(hashtagViewModel);
+        }
+
+            private List<HashtagCount> GetTopTenHour()
         {
             DateTime dateTimeMinusHour = dateTimeNow.AddHours(-1);
             Int32 unixTimestampMinusHour = (Int32)(dateTimeMinusHour.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
@@ -76,8 +128,8 @@ namespace TwitterWebMVCv2.Controllers
                     hashtagIdCounts.Add(newHashtagIdCount);
                     hashtagIdList.Add(newHashtagIdCount.HashtagId);
                 }
-
             }
+
             // Sort HashtagCounts by TimesUsed
             hashtagIdCounts.Sort(new HashtagIdCountComparer());
 

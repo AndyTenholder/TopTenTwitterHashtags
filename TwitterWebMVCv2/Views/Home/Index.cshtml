@@ -2,7 +2,46 @@
 @{
     ViewData["Title"] = "Top 10 #s";
 }
+<style>
+    .tableData:hover {
+        background-color: #0084b4;
+        color: white;
+    }
+    .fade {
+        opacity: 0.25;
+    }
+    .buttonSet {
+        display: flex;
+        justify-content: center;
+    }
+    .button {
+        width: 17%;
+        outline: none;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 10px 10px 10px 10px;
+        margin: 5px 2px 5px 2px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: .8em;
+    }
+    .button:hover {
+        opacity: 0.70;
+    }
+    .hashtag0Button {background-color: #0074D9;}
+    .hashtag1Button {background-color: #00b7ff;}
+    .hashtag2Button {background-color: #00cccc;}
+    .hashtag3Button {background-color: #00b765;}
+    .hashtag4Button {background-color: #00c616;}
+    .hashtag5Button {background-color: #FFDC00;}
+    .hashtag6Button {background-color: #ff7600;}
+    .hashtag7Button {background-color: #dd0c00;}
+    .hashtag8Button {background-color: #930047;}
+    .hashtag9Button {background-color: #9200a8;}
 
+</style>
 <h1>
     The Top 10
     @*SVG Twitter bird image*@
@@ -16,31 +55,75 @@
     </svg>
     #Hashtags!
 </h1>
-
-<button id="getHourData">Hour</button>
-<button id="getDayData">Day</button>
-<button id="getWeekData">Week</button>
+<br>
 
 @{
     if (Model.HourHashtagCounts.Count > 1)
     {
-        <table>
+        <table class="table">
             <tr>
-                <td>
+                <td class="tableData">
                     <ol>
-                        @for (int i = 0; i < 10; i++)
-                {
-                            <li><p>@Model.HourHashtagCounts[i].Hashtag.Name - @Model.HourHashtagCounts[i].TimesUsed</p></li>
-                        }
+                        <li value="1"><p>@Model.HourHashtagCounts[0].Hashtag.Name - @Model.HourHashtagCounts[0].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="6"><p>@Model.HourHashtagCounts[5].Hashtag.Name - @Model.HourHashtagCounts[5].TimesUsed</p></li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableData">
+                    <ol>
+                        <li value="2"><p>@Model.HourHashtagCounts[1].Hashtag.Name - @Model.HourHashtagCounts[1].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="7"><p>@Model.HourHashtagCounts[6].Hashtag.Name - @Model.HourHashtagCounts[6].TimesUsed</p></li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableData">
+                    <ol>
+                        <li value="3"><p>@Model.HourHashtagCounts[2].Hashtag.Name - @Model.HourHashtagCounts[2].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="8"><p>@Model.HourHashtagCounts[7].Hashtag.Name - @Model.HourHashtagCounts[7].TimesUsed</p></li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableData">
+                    <ol>
+                        <li value="4"><p>@Model.HourHashtagCounts[3].Hashtag.Name - @Model.HourHashtagCounts[3].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="9"><p>@Model.HourHashtagCounts[8].Hashtag.Name - @Model.HourHashtagCounts[8].TimesUsed</p></li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableData">
+                    <ol>
+                        <li value="5"><p>@Model.HourHashtagCounts[4].Hashtag.Name - @Model.HourHashtagCounts[4].TimesUsed</p></li>
+                    </ol>
+                </td>
+                <td class="tableData">
+                    <ol>
+                        <li value="10"><p>@Model.HourHashtagCounts[9].Hashtag.Name - @Model.HourHashtagCounts[9].TimesUsed</p></li>
                     </ol>
                 </td>
             </tr>
         </table>
     }
 }
-
-
-
 
 
 @{
@@ -79,16 +162,21 @@
         <canvas id="GraphCanvas"></canvas>
 
         @*buttons will be used to toggle data for each hashtag on and off in the graph*@
-        <button id="hashtag0Button">@Model.HourHashtagCounts[0].Hashtag.Name.ToString()</button>
-        <button id="hashtag1Button">@Model.HourHashtagCounts[1].Hashtag.Name.ToString()</button>
-        <button id="hashtag2Button">@Model.HourHashtagCounts[2].Hashtag.Name.ToString()</button>
-        <button id="hashtag3Button">@Model.HourHashtagCounts[3].Hashtag.Name.ToString()</button>
-        <button id="hashtag4Button">@Model.HourHashtagCounts[4].Hashtag.Name.ToString()</button>
-        <button id="hashtag5Button">@Model.HourHashtagCounts[5].Hashtag.Name.ToString()</button>
-        <button id="hashtag6Button">@Model.HourHashtagCounts[6].Hashtag.Name.ToString()</button>
-        <button id="hashtag7Button">@Model.HourHashtagCounts[7].Hashtag.Name.ToString()</button>
-        <button id="hashtag8Button">@Model.HourHashtagCounts[8].Hashtag.Name.ToString()</button>
-        <button id="hashtag9Button">@Model.HourHashtagCounts[9].Hashtag.Name.ToString()</button>
+        <div id="buttonSetTop" class="buttonSet">
+            <button id="hashtag0Button" class="button hashtag0Button">@Model.HourHashtagCounts[0].Hashtag.Name.ToString()</button>
+            <button id="hashtag1Button" class="button hashtag1Button">@Model.HourHashtagCounts[1].Hashtag.Name.ToString()</button>
+            <button id="hashtag2Button" class="button hashtag2Button">@Model.HourHashtagCounts[2].Hashtag.Name.ToString()</button>
+            <button id="hashtag3Button" class="button hashtag3Button fade">@Model.HourHashtagCounts[3].Hashtag.Name.ToString()</button>
+            <button id="hashtag4Button" class="button hashtag4Button fade">@Model.HourHashtagCounts[4].Hashtag.Name.ToString()</button>
+        </div>
+        <div id="buttonSetBotton" class="buttonSet">
+            <button id="hashtag5Button" class="button hashtag5Button fade">@Model.HourHashtagCounts[5].Hashtag.Name.ToString()</button>
+            <button id="hashtag6Button" class="button hashtag6Button fade">@Model.HourHashtagCounts[6].Hashtag.Name.ToString()</button>
+            <button id="hashtag7Button" class="button hashtag7Button fade">@Model.HourHashtagCounts[7].Hashtag.Name.ToString()</button>
+            <button id="hashtag8Button" class="button hashtag8Button fade">@Model.HourHashtagCounts[8].Hashtag.Name.ToString()</button>
+            <button id="hashtag9Button" class="button hashtag9Button fade">@Model.HourHashtagCounts[9].Hashtag.Name.ToString()</button>
+        </div>
+        
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
         <script>
@@ -131,15 +219,15 @@
         var hashtag9ButtonIsOn = false;
 
         var hashtag0Color = "#0074D9";
-        var hashtag1Color = "#7FDBFF";
-        var hashtag2Color = "#39CCCC";
-        var hashtag3Color = "#3D9970";
-        var hashtag4Color = "#2ECC40";
+        var hashtag1Color = "#00b7ff";
+        var hashtag2Color = "#00cccc";
+        var hashtag3Color = "#00b765";
+        var hashtag4Color = "#00c616";
         var hashtag5Color = "#FFDC00";
-        var hashtag6Color = "#FF851B";
-        var hashtag7Color = "#FF4136";
-        var hashtag8Color = "#85144b";
-        var hashtag9Color = "#B10DC9";
+        var hashtag6Color = "#ff7600";
+        var hashtag7Color = "#dd0c00";
+        var hashtag8Color = "#930047";
+        var hashtag9Color = "#9200a8";
 
         @* Constats to be used as labels for the X axis of the graph*@
         var MINUTESAGO = ["5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"];
@@ -178,6 +266,13 @@
                         scaleLabel: {
                             display: true,
                             labelString: "Tweets"
+                        }
+                    }],
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Minutes Ago"
                         }
                     }]
                 },
@@ -226,6 +321,11 @@
             Graph.data.datasets.splice(pos, 1);
         }
 
+        function toggleButtonFade(buttonId) {
+            var element = document.getElementById(buttonId);
+            element.classList.toggle("fade");
+        }
+
 
         @*Set on click listener for each button*@
         @*If button is already on, remove the corresponding data set*@
@@ -239,6 +339,7 @@
                 addDataset(hashtag0Name, hashtag0Color, hashtag0DataListJSON)
             };
             hashtag0ButtonIsOn = !hashtag0ButtonIsOn;
+            toggleButtonFade("hashtag0Button")
             window.myLine.update();
         });
 
@@ -249,6 +350,7 @@
                 addDataset(hashtag1Name, hashtag1Color, hashtag1DataListJSON)
             };
             hashtag1ButtonIsOn = !hashtag1ButtonIsOn;
+            toggleButtonFade("hashtag1Button")
             window.myLine.update();
         });
 
@@ -259,6 +361,7 @@
                 addDataset(hashtag2Name, hashtag2Color, hashtag2DataListJSON)
             };
             hashtag2ButtonIsOn = !hashtag2ButtonIsOn;
+            toggleButtonFade("hashtag2Button")
             window.myLine.update();
         });
 
@@ -269,6 +372,7 @@
                 addDataset(hashtag3Name, hashtag3Color, hashtag3DataListJSON)
             };
             hashtag3ButtonIsOn = !hashtag3ButtonIsOn;
+            toggleButtonFade("hashtag3Button")
             window.myLine.update();
         });
 
@@ -279,6 +383,7 @@
                 addDataset(hashtag4Name, hashtag4Color, hashtag4DataListJSON)
             };
             hashtag4ButtonIsOn = !hashtag4ButtonIsOn;
+            toggleButtonFade("hashtag4Button")
             window.myLine.update();
         });
 
@@ -289,6 +394,7 @@
                 addDataset(hashtag5Name, hashtag5Color, hashtag5DataListJSON)
             };
             hashtag5ButtonIsOn = !hashtag5ButtonIsOn;
+            toggleButtonFade("hashtag5Button")
             window.myLine.update();
         });
 
@@ -299,6 +405,7 @@
                 addDataset(hashtag6Name, hashtag6Color, hashtag6DataListJSON)
             };
             hashtag6ButtonIsOn = !hashtag6ButtonIsOn;
+            toggleButtonFade("hashtag6Button")
             window.myLine.update();
         });
 
@@ -309,6 +416,7 @@
                 addDataset(hashtag7Name, hashtag7Color, hashtag7DataListJSON)
             };
             hashtag7ButtonIsOn = !hashtag7ButtonIsOn;
+            toggleButtonFade("hashtag7Button")
             window.myLine.update();
         });
 
@@ -319,6 +427,7 @@
                 addDataset(hashtag8Name, hashtag8Color, hashtag8DataListJSON)
             };
             hashtag8ButtonIsOn = !hashtag8ButtonIsOn;
+            toggleButtonFade("hashtag8Button")
             window.myLine.update();
         });
 
@@ -329,6 +438,7 @@
                 addDataset(hashtag9Name, hashtag9Color, hashtag9DataListJSON)
             };
             hashtag9ButtonIsOn = !hashtag9ButtonIsOn;
+            toggleButtonFade("hashtag9Button")
             window.myLine.update();
         });
         </script>

@@ -9,6 +9,7 @@ using TwitterWebMVCv2.Comparers;
 using TwitterWebMVCv2.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace TwitterWebMVCv2.Controllers
 {
@@ -115,12 +116,17 @@ namespace TwitterWebMVCv2.Controllers
                     }
                     else
                     {
+                        byte[] bytes = Encoding.Default.GetBytes(hashTag.Name);
+                        string hashtagName = (Encoding.UTF8.GetString(bytes));
+
                         HashtagCount newHashtagCount = new HashtagCount
                         {
                             Hashtag = hashTag,
                             // Twitter API stream only gives 1% of all tweets
                             // So each hashtag collected will be counted 100 times
                             TimesUsed = 100,
+
+                            HashtagName = hashtagName,
 
                             // int[] that stores data to be used in line graph
                             // period is intervals for the X axis

@@ -9,6 +9,7 @@ namespace TwitterWebMVCv2.CountObjects
     public class HashtagCount
     {
         public Hashtag Hashtag { get; set; }
+        public string HashtagName { get; set; }
         public int TimesUsed { get; set; }
         public int[] TweetsPer { get; set; }
 

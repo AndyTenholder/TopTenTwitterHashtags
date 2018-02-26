@@ -24,11 +24,13 @@ namespace TwitterWebMVCv2.Controllers
             context = dbContext;
         }
 
-        public IActionResult Index(Hashtag hashtag)
+        public IActionResult Index(int id)
         {
-            List<TweetHashtag> tweetHashtags = context.TweetHashtags.Where(th => th.HashtagID == hashtag.ID).ToList();
+            Hashtag hashtag = context.Hashtags.Single(h => h.ID == id);
+            List<TweetHashtag> tweetHashtags = context.TweetHashtags.Where(th => th.HashtagID == id).ToList();
             List<TweetHashtag> tweethHashtagsPast24Hours = tweetHashtags.Where(th => UnixTimeStampToDateTime(th.UnixTimeStamp) > dateTimeNow.AddDays(-1)).ToList();
             List<Tweet> tweetsPast24Hours = context.Tweets.Where(t => UnixTimeStampToDateTime(t.UnixTimeStamp) > dateTimeNow.AddDays(-1)).ToList();
+            List<Language> languages = context.Languages.ToList();
 
             List<Tweet> tweets = new List<Tweet>();
 
@@ -40,7 +42,7 @@ namespace TwitterWebMVCv2.Controllers
 
             int totalTweets = tweets.Count * 100;
 
-            List<Language> languagesUsed = new List<Language>();
+            List<int> languagesIdsUsed = new List<int>();
             List<LanguageCount> languageCounts = new List<LanguageCount>();
 
             List<String> hashtagStrings = new List<string>();
@@ -56,19 +58,19 @@ namespace TwitterWebMVCv2.Controllers
                 tweetsPerHour[hour] += 100;
 
                 // Retrieve the language of the tweet and keep track of the times that language has been used
-                if (languagesUsed != null && !languagesUsed.Contains(tweet.Language))
+                if (languagesIdsUsed != null && languagesIdsUsed.Contains(tweet.LanguageID))
                 {
-                    LanguageCount languageCount = languageCounts.Single(lc => lc.Language == tweet.Language);
+                    LanguageCount languageCount = languageCounts.Single(lc => lc.Language.ID == tweet.LanguageID);
                     languageCount.TimesUsed += 100;
                 }
                 else
                 {
                     LanguageCount newLanguageCount = new LanguageCount
                     {
-                        Language = tweet.Language,
+                        Language = languages.Single(l => l.ID == tweet.LanguageID),
                         TimesUsed = 100
                     };
-                    languagesUsed.Add(tweet.Language);
+                    languagesIdsUsed.Add(tweet.LanguageID);
                     languageCounts.Add(newLanguageCount);
                 }
 
@@ -88,7 +90,7 @@ namespace TwitterWebMVCv2.Controllers
 
                 foreach (String hashtagString in substrings)
                 {
-                    if (hashtagStrings != null && !hashtagStrings.Contains(hashtagString))
+                    if (hashtagStrings != null && hashtagStrings.Contains(hashtagString))
                     {
                         HashtagStringCount hashtagStringCount = hashtagStringCounts.Single(hsc => hsc.HashtagString == hashtagString);
                         hashtagStringCount.TimesUsed += 100;
@@ -109,10 +111,10 @@ namespace TwitterWebMVCv2.Controllers
             // Sort HashtagStringCounts by TimesUsed
             hashtagStringCounts.Sort(new HashtagStringCountComparer());
 
-            if (hashtagStringCounts.Count > 10)
+            if (hashtagStringCounts.Count > 11)
             {
                 // Drop all but Top 10 Hashtags
-                hashtagStringCounts.RemoveRange(10, hashtagStringCounts.Count - 10);
+                hashtagStringCounts.RemoveRange(11, hashtagStringCounts.Count - 11);
             }
 
             // Create a HashtagCount object for each  of the Top Ten HashtagStringCount objects
@@ -131,9 +133,10 @@ namespace TwitterWebMVCv2.Controllers
             }
             // Sort HashtagCounts by TimesUsed
             hashtagCounts.Sort(new HashtagCountComparer());
+            languageCounts.Sort(new LanguageCountComparer());
 
-            int totalLanguages = languagesUsed.Count;
-            int totalHashtags = hashtagStrings.Count;
+            int totalLanguages = languagesIdsUsed.Count;
+            int totalHashtags = hashtagStrings.Count -1;
             string hashtagName = hashtag.Name;
 
 

@@ -1,11 +1,28 @@
 ﻿@model TwitterWebMVCv2.ViewModels.HashtagViewModel
 
+<style>
+    a {
+        color: inherit;
+        text-decoration: inherit;
+    }
+
+        a:hover {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+    .tableData:hover {
+        background-color: #0084b4;
+        color: white;
+    }
+</style>
+
 @{
-    ViewData["Title"] = "#TBT Data";
+    ViewData["Title"] = Model.HashtagName;
 }
 
 <h1>
-    There have been <strong>@Model.TotalTweets</strong>* #@Model.HashtagName
+    There have been <strong>@Model.TotalTweets</strong> @Model.HashtagName
     @*SVG Twitter bird image*@
     <svg viewbox="0 0 2000 1625.36"
          width="43"
@@ -14,21 +31,20 @@
          xmlns="http://www.w3.org/2000/svg">
         <path d="m 1999.9999,192.4 c -73.58,32.64 -152.67,54.69 -235.66,64.61 84.7,-50.78 149.77,-131.19 180.41,-227.01 -79.29,47.03 -167.1,81.17 -260.57,99.57 C 1609.3399,49.82 1502.6999,0 1384.6799,0 c -226.6,0 -410.328,183.71 -410.328,410.31 0,32.16 3.628,63.48 10.625,93.51 -341.016,-17.11 -643.368,-180.47 -845.739,-428.72 -35.324,60.6 -55.5583,131.09 -55.5583,206.29 0,142.36 72.4373,267.95 182.5433,341.53 -67.262,-2.13 -130.535,-20.59 -185.8519,-51.32 -0.039,1.71 -0.039,3.42 -0.039,5.16 0,198.803 141.441,364.635 329.145,402.342 -34.426,9.375 -70.676,14.395 -108.098,14.395 -26.441,0 -52.145,-2.578 -77.203,-7.364 52.215,163.008 203.75,281.649 383.304,284.946 -140.429,110.062 -317.351,175.66 -509.5972,175.66 -33.1211,0 -65.7851,-1.949 -97.8828,-5.738 181.586,116.4176 397.27,184.359 628.988,184.359 754.732,0 1167.462,-625.238 1167.462,-1167.47 0,-17.79 -0.41,-35.48 -1.2,-53.08 80.1799,-57.86 149.7399,-130.12 204.7499,-212.41"
               style="fill:#00aced" />
-    </svg>
-    s in the last 24 hours.
+    </svg>s in the last 24 hours.
 </h1>
 
 @*Tweets Each Hour Line Graph Logic*@
 @{
     @*Random object used to create random colors*@
-Random rnd = new Random();
-List<int> tweetDataList = new List<int>();
+    Random rnd = new Random();
+    List<int> tweetDataList = new List<int>();
     @*Chose to have random color for line graph becuase pie chart colors are random*@
-string TweetColor = String.Format("rgba({0},{1},{2},0.6)", rnd.Next(256), rnd.Next(256), rnd.Next(256));
-for (int i = 0; i < Model.TweetsPerHour.Count(); i++)
-{
-    tweetDataList.Add(Model.TweetsPerHour[i]);
-}
+    string TweetColor = String.Format("rgba({0},{1},{2},0.6)", rnd.Next(256), rnd.Next(256), rnd.Next(256));
+    for (int i = 0; i < Model.TweetsPerHour.Count(); i++)
+    {
+        tweetDataList.Add(Model.TweetsPerHour[i]);
+    }
 }
 @*graphs made using the Charts.js Lib http://www.chartjs.org/*@
 <canvas id="TweetsPerHourChart"></canvas>
@@ -84,22 +100,22 @@ for (int i = 0; i < Model.TweetsPerHour.Count(); i++)
     List<int> borderList = new List<int>();
 
     @*List of languages was sorted from greatest to least in the TBTController using language comparer*@
-foreach (var langauge in Model.LanguageCounts)
-{
-    if (langauge.Language.Name == "UN_NotReferenced")
+    foreach (var langauge in Model.LanguageCounts)
     {
-        languageNameList.Add("Unidentified");
+        if (langauge.Language.Name.ToString() == "UN_NotReferenced")
+        {
+            languageNameList.Add("Unidentified");
+        }
+        else
+        {
+            languageNameList.Add(langauge.Language.Name);
+        }
+        timesUsedList.Add(langauge.TimesUsed);
+        @*Created randomized color so that each item on the pie chart would have it's own color*@
+        @*TODO- Create/find a list of colors 30+. The randomized colors are often to similar or unattractive*@
+        colorList.Add(String.Format("rgba({0},{1},{2},0.6)", rnd.Next(256), rnd.Next(256), rnd.Next(256)));
+        borderList.Add(0);
     }
-    else
-    {
-        languageNameList.Add(langauge.Language.Name);
-    }
-    timesUsedList.Add(langauge.TimesUsed);
-    @*Created randomized color so that each item on the pie chart would have it's own color*@
-    @*TODO- Create/find a list of colors 30+. The randomized colors are often to similar or unattractive*@
-    colorList.Add(String.Format("rgba({0},{1},{2},0.6)", rnd.Next(256), rnd.Next(256), rnd.Next(256)));
-    borderList.Add(0);
-}
 }
 @*graphs made using the Charts.js Lib http://www.chartjs.org/*@
 <canvas id="LanguagePieChart"></canvas>
@@ -132,16 +148,18 @@ foreach (var langauge in Model.LanguageCounts)
 </script>
 <br />
 <h1>with <strong>@Model.TotalHashtags</strong> unique accompanying Hashtags</h1>
+<h4>Click on # below for more info.</h4>
 <table class="table">
     <tr>
         <th>Top 10</th>
         <th>Times Used</th>
     </tr>
-    @for (int i = 1; i < 11; i++)
+    @for (int i = 1; i < Model.HashtagCounts.Count; i++)
     {
         <tr>
+
             @*Hashtags list was sorted from greatest to least in controller using hashtag comparer*@
-            <td>@Model.HashtagCounts[i].Hashtag.Name</td>
+            <td class="tableData"><a asp-controller="Hashtag" asp-action="Index" asp-route-id="@Model.HashtagCounts[i].Hashtag.ID"><p>@Model.HashtagCounts[i].Hashtag.Name</p></a></td>
             <td>@Model.HashtagCounts[i].TimesUsed</td>
         </tr>
     }

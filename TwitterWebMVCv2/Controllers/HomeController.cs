@@ -30,17 +30,17 @@ namespace TwitterWebMVCv2.Controllers
         public IActionResult Index()
         {
 
-            List<HashtagCount> hourTopTen = GetTopTenHour();
-            //List<HashtagCount> dayTopTen = GetTopTenDay();
-            //List<HashtagCount> weekTopTen = GetTopTenWeek();
+            List<Hashtag> hashtagsAll = context.Hashtags.ToList();
 
-            TopTenViewModel topTenViewModel = new TopTenViewModel(hourTopTen);
+            List<HashtagCount> hourTopTen = GetTopTenHour(hashtagsAll);
+
+            TopTenViewModel topTenViewModel = new TopTenViewModel(hourTopTen, hashtagsAll, dateTimeNow);
 
             return View(topTenViewModel);
         }
 
         // Method to retrun Top Ten hashtags of the past hour
-            private List<HashtagCount> GetTopTenHour()
+        private List<HashtagCount> GetTopTenHour(IEnumerable<Hashtag> hashtagsAll)
         {
             // Create variable to hold unix time minus one hour
             // Time stamps in DB are in unix time
@@ -51,7 +51,7 @@ namespace TwitterWebMVCv2.Controllers
             var tweetHashtags = context.TweetHashtags.FromSql("SELECT * FROM TweetHashtags WHERE UnixTimeStamp>{0}", unixTimestampMinusHour).ToList();
             IEnumerable<Tweet> tweets = context.Tweets.Where(t => t.UnixTimeStamp > unixTimestampMinusHour).ToList();
             IEnumerable<int> tweetHashtagIds = (tweetHashtags.Select(tht => tht.HashtagID)).ToList();
-            IEnumerable<Hashtag> hashTags = context.Hashtags.Where(ht => tweetHashtagIds.Contains(ht.ID)).ToList(); ;
+            IEnumerable<Hashtag> hashtags = hashtagsAll.Where(ht => tweetHashtagIds.Contains(ht.ID)).ToList(); ;
 
             // HashtagIdCount save the ID of the hashtag, keep track of the number of times it was used, and save a list of the TweetHashtags
             List<HashtagIdCount> hashtagIdCounts = new List<HashtagIdCount>();
@@ -60,7 +60,7 @@ namespace TwitterWebMVCv2.Controllers
             List<int> hashtagIdList = new List<int>();
 
             // For each unique hashtag create HashtagIdCount object and keep track of how many times it was used 
-            foreach(TweetHashtag tweetHashtag in tweetHashtags)
+            foreach (TweetHashtag tweetHashtag in tweetHashtags)
             {
                 if (hashtagIdList != null && hashtagIdList.Contains(tweetHashtag.HashtagID))
                 {
@@ -104,7 +104,7 @@ namespace TwitterWebMVCv2.Controllers
             {
                 foreach (TweetHashtag tweetHashtag in hashtagIdCount.TweetHashtags)
                 {
-                    Hashtag hashTag = hashTags.Single(h => h.ID == tweetHashtag.HashtagID);
+                    Hashtag hashTag = hashtags.Single(h => h.ID == tweetHashtag.HashtagID);
 
                     if (hashtagStringList != null && hashtagStringList.Contains(hashTag.Name.ToString()))
                     {
@@ -147,7 +147,7 @@ namespace TwitterWebMVCv2.Controllers
                     }
                 }
             }
-            
+
             // Sort HashtagCounts by TimesUsed
             hashtagCounts.Sort(new HashtagCountComparer());
 
@@ -156,7 +156,7 @@ namespace TwitterWebMVCv2.Controllers
                 // Drop all but Top 10 Hashtags
                 hashtagCounts.RemoveRange(10, hashtagCounts.Count - 10);
             }
-            
+
             return hashtagCounts;
         }
 

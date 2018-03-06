@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TwitterWebMVCv2.CountObjects;
+using TwitterWebMVCv2.Models;
 
 namespace TwitterWebMVCv2.ViewModels
 {
@@ -12,13 +13,14 @@ namespace TwitterWebMVCv2.ViewModels
         public IList<LanguageCount> LanguageCounts { get; set; }
         public IList<HashtagCount> HashtagCounts { get; set; }
         public int[] TweetsPerHour { get; set; }
+        public List<Hashtag> HashtagsAll { get; set; }
 
         public int TotalTweets { get; set; }
         public int TotalLanguages { get; set; }
         public int TotalHashtags { get; set; }
 
         public HashtagViewModel(IList<LanguageCount> languageCounts, IList<HashtagCount> hashtagCounts, int[] tweetsPerHour,
-             int totalTweets, int totalLanguages, int totalHashtags, string hashtagName)
+             int totalTweets, int totalLanguages, int totalHashtags, string hashtagName, List<Hashtag> hashtagsAll)
         {
             LanguageCounts = languageCounts;
             HashtagCounts = hashtagCounts;
@@ -27,6 +29,7 @@ namespace TwitterWebMVCv2.ViewModels
             TotalLanguages = totalLanguages;
             TotalHashtags = totalHashtags;
             HashtagName = hashtagName;
+            HashtagsAll = hashtagsAll;
         }
     }
 }

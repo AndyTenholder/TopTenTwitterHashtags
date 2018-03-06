@@ -15,6 +15,13 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
+    <style>
+        .search-bar{
+            margin-top: 1em;
+            display: block;
+            float: right;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -32,6 +39,15 @@
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                 </ul>
+                @*Search bar that allows user to search for info on an individual hashtag*@
+                @*Script controlling search bar in script tag below*@
+                <span class="search-bar">
+                    <form asp-controller="Hashtag" asp-action="Index" method="post">
+                        <input type="text" name="name" id="search" placeholder="Type #" list="searchresults" autocomplete="on" />
+                        <input type="submit" value="Search" />
+                    </form>
+                </span>
+                
             </div>
         </div>
     </nav>

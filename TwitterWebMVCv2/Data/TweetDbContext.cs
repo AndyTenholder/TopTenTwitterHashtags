@@ -19,7 +19,7 @@ namespace TwitterWebMVCv2.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"*******************************");
+                optionsBuilder.UseSqlServer(@"Server=tcp:toptenhashtags-server.database.windows.net,1433;Initial Catalog=TestDatabase;Persist Security Info=False;User ID=AndyTenholder@toptenhashtags-server;Password=DeadDudesDontTalk1825;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 

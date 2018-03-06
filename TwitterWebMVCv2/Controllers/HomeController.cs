@@ -20,7 +20,7 @@ namespace TwitterWebMVCv2.Controllers
 
         // All timestamps are in UTC time.  So UTC is used throughout the app
 
-        DateTime dateTimeNow = DateTime.UtcNow;
+        
 
         public HomeController(TweetDbContext dbContext)
         {
@@ -29,27 +29,103 @@ namespace TwitterWebMVCv2.Controllers
 
         public IActionResult Index()
         {
+            // Database uses UTC time for all DateTime stamps
+            DateTime dateTimeNow = DateTime.UtcNow;
 
             List<Hashtag> hashtagsAll = context.Hashtags.ToList();
 
-            List<HashtagCount> hourTopTen = GetTopTenHour(hashtagsAll);
+            List<HashtagCount> hourTopTen = GetTopTenHour(hashtagsAll, dateTimeNow, context);
 
-            TopTenViewModel topTenViewModel = new TopTenViewModel(hourTopTen, hashtagsAll, dateTimeNow);
+            TopTenViewModel topTenViewModel = new TopTenViewModel(hourTopTen, hashtagsAll, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(-1));
 
             return View(topTenViewModel);
         }
 
+        [HttpPost]
+        public IActionResult Index(DateTime date, string time)
+        {
+            // Time comes in as string ex "09:12"
+            Char delimiter = ':';
+            String[] substrings = time.Split(delimiter);
+            int hours = Int32.Parse(substrings[0]);
+            int minutes = Int32.Parse(substrings[1]);
+
+            // Code errored when I tried to AddHours and AddMinutes without creating new variables
+            DateTime dateWithHours = date.AddHours(hours);
+            DateTime dateTimeUser = dateWithHours.AddMinutes(minutes);
+
+            // Turns user selected time into eqivolent UTC time
+            DateTime dateUTC = dateTimeUser.ToUniversalTime();
+
+            List<Hashtag> hashtagsAll = context.Hashtags.ToList();
+
+            DateTime dateNowUTC = DateTime.UtcNow;
+
+            // Compares user selected time to current time
+            // returns 1 if greater, 0 if equal, -1 if less than
+            int result = DateTime.Compare(dateUTC.AddHours(-1), dateNowUTC);
+
+            // if user selected time is greater than current time return veiw with error message
+            if (result > 0)
+            {
+                List<HashtagCount> hourTopTenError = GetTopTenHour(hashtagsAll, DateTime.UtcNow, context);
+
+                TopTenViewModel topTenViewModelError = new TopTenViewModel
+                {
+                    HourHashtagCounts = hourTopTenError,
+                    HashtagsAll = hashtagsAll,
+                    DateTimeNow = DateTime.Now,
+                    DateTimeUser = DateTime.Now.AddHours(-1),
+                    DateTimeError = true
+                };
+
+                return View(topTenViewModelError);
+            }
+
+            List<HashtagCount> hourTopTen = GetTopTenHour(hashtagsAll, dateUTC, context);
+
+            TopTenViewModel topTenViewModel = new TopTenViewModel
+            {
+                HourHashtagCounts = hourTopTen,
+                HashtagsAll = hashtagsAll,
+                DateTimeNow = DateTime.Now,
+                DateTimeUser = dateTimeUser
+            };
+
+            return View(topTenViewModel);
+        }
+
+        // Same as Index.html but used if error occured when searching for hashtag through hashtag controller
+        public IActionResult HashtagNotFound()
+        {
+            List<Hashtag> hashtagsAll = context.Hashtags.ToList();
+            List<HashtagCount> hourTopTenError = HomeController.GetTopTenHour(hashtagsAll, DateTime.UtcNow, context);
+
+            TopTenViewModel topTenViewModelError = new TopTenViewModel
+            {
+                HourHashtagCounts = hourTopTenError,
+                HashtagsAll = hashtagsAll,
+                DateTimeNow = DateTime.Now,
+                DateTimeUser = DateTime.Now.AddHours(-1),
+                SearchError = true
+            };
+
+            return View(topTenViewModelError);
+        }
+
+
         // Method to retrun Top Ten hashtags of the past hour
-        private List<HashtagCount> GetTopTenHour(IEnumerable<Hashtag> hashtagsAll)
+        public static List<HashtagCount> GetTopTenHour(IEnumerable<Hashtag> hashtagsAll, DateTime dateTimeStart, TweetDbContext context)
         {
             // Create variable to hold unix time minus one hour
             // Time stamps in DB are in unix time
-            DateTime dateTimeMinusHour = dateTimeNow.AddHours(-1);
+            Int32 unixTimestampStart = (Int32)(dateTimeStart.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            DateTime dateTimeMinusHour = dateTimeStart.AddHours(-1);
             Int32 unixTimestampMinusHour = (Int32)(dateTimeMinusHour.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
             // Contact DB and retrieve data needed
-            var tweetHashtags = context.TweetHashtags.FromSql("SELECT * FROM TweetHashtags WHERE UnixTimeStamp>{0}", unixTimestampMinusHour).ToList();
-            IEnumerable<Tweet> tweets = context.Tweets.Where(t => t.UnixTimeStamp > unixTimestampMinusHour).ToList();
+            var tweetHashtags = context.TweetHashtags.FromSql("SELECT * FROM TweetHashtags WHERE UnixTimeStamp BETWEEN {0} AND {1}", unixTimestampMinusHour, unixTimestampStart).ToList();
+            var tweets = context.Tweets.FromSql("SELECT * FROM Tweets WHERE UnixTimeStamp BETWEEN {0} AND {1}", unixTimestampMinusHour, unixTimestampStart).ToList();
             IEnumerable<int> tweetHashtagIds = (tweetHashtags.Select(tht => tht.HashtagID)).ToList();
             IEnumerable<Hashtag> hashtags = hashtagsAll.Where(ht => tweetHashtagIds.Contains(ht.ID)).ToList(); ;
 
@@ -112,7 +188,7 @@ namespace TwitterWebMVCv2.Controllers
                         // Twitter API stream only gives 1% of all tweets
                         // So each hashtag collected will be counted 100 times
                         hashtagCount.TimesUsed += 100;
-                        AddTweetPerMinute(tweetHashtag, hashtagCount, tweets);
+                        AddTweetPerMinute(tweetHashtag, hashtagCount, tweets, dateTimeStart);
                     }
                     else
                     {
@@ -139,7 +215,7 @@ namespace TwitterWebMVCv2.Controllers
                         if (tweet != null)
                         {
                             // adds 100 to the correct 5 minute interval 0-11
-                            newHashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
+                            newHashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeStart - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
                         }
 
                         hashtagCounts.Add(newHashtagCount);
@@ -169,7 +245,7 @@ namespace TwitterWebMVCv2.Controllers
             return dtDateTime;
         }
 
-        private void AddTweetPerMinute(TweetHashtag tweetHashtag, HashtagCount hashtagCount, IEnumerable<Tweet> tweets)
+        public static void AddTweetPerMinute(TweetHashtag tweetHashtag, HashtagCount hashtagCount, IEnumerable<Tweet> tweets, DateTime dateTime)
         {
             // TODO- tweet is sometimes returning as null, not sure how this is happening
             // using if to catch null instances
@@ -177,7 +253,7 @@ namespace TwitterWebMVCv2.Controllers
             if (tweet != null)
             {
                 // adds 100 to the correct 5 minute interval 0-11
-                hashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTimeNow - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
+                hashtagCount.TweetsPer[Convert.ToInt32(Math.Floor((dateTime - UnixTimeStampToDateTime(tweet.UnixTimeStamp)).Minutes / 5.0))] += 100;
             }
         }
     }

@@ -20,6 +20,21 @@
     ViewData["Title"] = Model.HashtagName;
 }
 
+<br />
+
+@*Template to hold an option for each hashtag in the database*@
+@*Template is used to populate the datalist*@
+@*Script to populate datalist in script tag below*@
+<template id="resultstemplate">
+    @foreach (var hashtagOne in Model.HashtagsAll)
+    {
+        <option>@hashtagOne.Name</option>
+    }
+</template>
+
+@*Datalist used to auto populate choices in search bar*@
+<datalist id="searchresults"></datalist>
+
 <h1>
     There have been <strong>@Model.TotalTweets</strong> @Model.HashtagName
     @*SVG Twitter bird image*@
@@ -49,6 +64,23 @@
 <canvas id="TweetsPerHourChart"></canvas>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
 <script>
+
+    @*Show 10 suggestions as user inputs hashtag in search*@
+    var search = document.querySelector('#search');
+    var results = document.querySelector('#searchresults');
+    var templateContent = document.querySelector('#resultstemplate').content;
+    search.addEventListener('keyup', function handler(event) {
+        while (results.children.length) results.removeChild(results.firstChild);
+        var inputVal = new RegExp(search.value.trim(), 'i');
+        var clonedOptions = templateContent.cloneNode(true);
+        var set = Array.prototype.reduce.call(clonedOptions.children, function searchFilter(frag, el) {
+            if (inputVal.test(el.textContent) && frag.children.length < 8) frag.appendChild(el);
+            return frag;
+        }, document.createDocumentFragment());
+        results.appendChild(set);
+    });
+
+    @*Code for Line chart from Charts.JS*@
     var ctx = document.getElementById("TweetsPerHourChart");
     var TweetsPerHourChart = new Chart(ctx, {
         type: 'line',

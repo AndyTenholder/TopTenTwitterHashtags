@@ -12,13 +12,18 @@ namespace TwitterWebMVCv2.ViewModels
         public List<HashtagCount> HourHashtagCounts { get; set; }
         public List<Hashtag> HashtagsAll { get; set; }
         public DateTime DateTimeNow { get; set; }
-        public DateTime MyProperty { get; set; }
+        public DateTime DateTimeUser { get; set; }
+        public Boolean DateTimeError { get; set; }
+        public Boolean SearchError { get; set; }
 
-        public TopTenViewModel(List<HashtagCount> hourHashtagCounts, List<Hashtag> hashtagsAll, DateTime dateTimeNow)
+        public TopTenViewModel(){}
+
+        public TopTenViewModel(List<HashtagCount> hourHashtagCounts, List<Hashtag> hashtagsAll, DateTime dateTimeNow, DateTime dateTimeUser)
         {
             HourHashtagCounts = hourHashtagCounts;
             HashtagsAll = hashtagsAll;
             DateTimeNow = dateTimeNow;
+            DateTimeUser = dateTimeUser;
         }
     }
 }
